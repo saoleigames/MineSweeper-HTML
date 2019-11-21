@@ -1,0 +1,375 @@
+
+/*-----------设置按钮----------------*/
+
+#minesweeper {
+    user-select:none;
+    -webkit-user-select: none;
+}
+
+
+
+
+
+
+
+
+/*---------------设置按钮和选项----------------------*/
+
+#option{
+    display: block;
+    position: absolute;
+    left : 2px;
+    border-radius : 3px;
+    margin-left: 1px;
+    margin-top : 1px;
+    height: 19px;
+    width : 30px;
+}
+
+#option:hover{
+    background-color: #DFD9D9;
+}
+
+#option:hover>#s-list{
+    display: block;
+}
+
+
+#option:before{
+    content: "";
+    position: absolute;
+    border-top : 1px solid #333;
+    top : 4px;
+    left: 4px;
+    width : 22px;
+    box-shadow:  0 5px #333, 0 10px #333;
+}
+
+#s-list{
+    font-size: 0.9em;
+    position: relative;
+    color : #333;
+    display: none;
+    top : 0;
+    left: 0;
+    z-index: 11;
+}
+
+#s-list ul{
+    padding: 3px 4px 3px 5px;
+    width : 4.5em;
+    background-color: #F5F5F5;
+    box-shadow: -1px 0 2px #555, 1px 2px 3px #555;
+    border-radius: 3px;
+}
+
+#s-list ul li{
+    position: relative;
+    list-style: none;
+    text-align: left;
+    cursor: default;
+    margin: 2px 0;
+    padding-left: 2px;
+}
+
+#s-list li:hover{
+    background-color: skyblue;
+}
+
+#s-list ul li:hover ul{
+    display: block;
+}
+
+#s-list ul ul {
+    z-index: 12;
+    border : 1px solid gray;
+    position: absolute;
+    list-style: none;
+    width : 4.5em;
+    top : -1px;
+    left : 4.4em;
+    background-color: #F5F5F5;
+    box-shadow: -1px 0 5px #999, 1px 1px 8px #555;
+}
+
+#s-list ul li>ul{
+    display: none;
+}
+
+.spot{
+    display: inline-block;
+    position: absolute;
+}
+
+.spot:before{
+    content: "";
+    position: absolute;
+    border-left: 1px solid gray;
+    height: 1px;
+    left: 25px;
+    top : 6px;
+    box-shadow: 1px 1px gray,2px 2px gray,3px 3px gray,4px 4px gray,
+    3px 5px gray, 2px 6px gray, 1px 7px gray, 0px 8px gray;
+}
+
+
+
+/*---------------------顶部信息栏---------------------*/
+
+#topTools {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-around;
+    text-align: center;
+    margin: 20px auto 10px auto;
+}
+
+#topTools .toolBox, #topTools .label{
+    display: inline-block;
+    font-size: 0.6rem;
+    color : #999;
+}
+
+#topTools #timer, #topTools #mineNum{
+    color : #555;
+    font-size: 1rem;
+    text-shadow: 1px 1px 2px gray;
+    text-align: center;
+    border : 1px solid #eee;
+    display: inline-block;
+    width : 48px;
+    border-radius: 3px;
+    background-color: rgba(201, 206, 211, 0.7);
+    box-shadow: inset 1px 1px 1px #AAA4A4;
+}
+
+/***************格子区域*******************/
+
+
+#desk{
+    margin: 20px 35px;
+    border-collapse : collapse;
+    box-shadow: 0 0 1px #999;
+}
+
+#desk tr td{
+    box-sizing: border-box;
+    cursor: default;
+    position: relative;
+    width : 19px;
+    height: 19px;
+    border : 1px solid #333;
+}
+
+
+/**默认的尺寸元素**/
+.basics{
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top : 0;
+    width : 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 18px;
+}
+
+/**最外层的遮挡**/
+.cover{
+    font-weight: bold;
+    color : #FFF;
+    background-color: #64B478;
+}
+
+.select-around{
+    background-color: rgb(174, 201, 181);
+}
+
+.bg{
+    color : #333;
+    background-color: #BBB;
+}
+
+/**小红旗**/
+.flag:before{
+    position: absolute;
+    top : 1px;
+    left : 6px;
+    content: "";
+    border-left: 1px solid #000;
+    height: 16px;
+    box-shadow: 1px 2px 1px #555;
+}
+.flag:after{
+    position: absolute;
+    content: "";
+    top : 1px;
+    left: 7px;
+    border-top : 8px solid #E91212;
+    border-top-right-radius: 4px;
+    width : 8px;
+    box-shadow: 1px 2px 1px #555;
+}
+
+/**地雷**/
+.bomb:before{
+    position: absolute;
+    content: "";
+    top : 2px;
+    left: 1.5px;
+    border : 2px solid #333;
+    width : 10px;
+    height: 10px;
+    border-radius: 8px;
+    background-color: #333;
+}
+.bomb:after{
+    position: absolute;
+    content: "";
+    left : 1.55px;
+    top : 2.5px;
+    border : 1.5px solid #333;
+    border-radius: 1.5px;
+    box-shadow: 5.5px -2px #333,
+                10.5px 0 #333,
+                13px 5px #333,
+                10.5px 10.5px #333,
+                5.5px 12px #333,
+                0 10.5px #333,
+                -2px 5px #333,
+                2px 2px #fff;
+}
+
+
+.symbol-x:before{
+    content: "╳";
+    color : red;
+    position: absolute;
+    top : 0;
+    left : 4px;
+}
+
+
+/********************弹出窗口********************/
+
+
+#games-win-window {
+    position: absolute;
+    display: none;
+    z-index: 100;
+}
+
+#games-win-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width : 200px;
+    height: 100px;
+}
+
+#games-win-content span{
+    font-size: 1.2rem;
+}
+
+/****************信息统计***********************/
+
+#games-info-window{
+    display: none;
+    z-index: 100;
+}
+
+#contentBox {
+    z-index: 100;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: center;
+    width : 370px;
+    margin: 15px 15px 20px 15px;
+    box-shadow: 0 0 3px gray;
+}
+
+#contentBox table{
+    width : 100%;
+    border-collapse: collapse;
+}
+
+#contentBox table td{
+    cursor: default;
+    height: 25px;
+    text-align: center;
+    border : 1px solid #999;
+    border-bottom: none;
+}
+
+#contentBox #threeInfo{
+    display: flex;
+    width : 100%;
+    background-color: white;
+    border-top: none;
+    height: 180px;
+    border : 1px solid #999;
+}
+
+#contentBox #threeInfo #win5,
+#contentBox #threeInfo #win5info {
+    position: relative;
+    display: flex;
+    width : 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+#contentBox #threeInfo #win5 span{
+    z-index: 21;
+    color : #888;
+    position: absolute;
+    display: inline-block;
+    padding: 0 3px;
+    left: 50px;
+    top : 23px;
+    background-color: white;
+}
+
+#contentBox #threeInfo #win5 ul,
+#contentBox #threeInfo #win5info ul
+{
+    padding-left: 0;
+    width : 140px;
+}
+
+#contentBox #threeInfo #win5info ul {
+    margin-left: 50px;
+}
+
+#contentBox #threeInfo #win5 ul{
+    width : 110px;
+    height: 115px;
+    padding: 0 0 0 5px;
+    border : 1px solid #AAA;
+    border-radius: 5px;
+}
+
+#contentBox #threeInfo #win5 ul li,
+#contentBox #threeInfo #win5info ul li
+{
+    list-style: none;
+    margin : 5px 0;
+}
+
+
+/* --------------关于游戏-------------*/
+
+#about-games-window{
+    position: absolute;
+    z-index: 101;
+    font-size: 0.8rem;
+    display: none;
+}
+
+#about-games-content{
+    width : 300px;
+    margin: 1em;
+}

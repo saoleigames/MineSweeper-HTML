@@ -1,0 +1,164 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <title>TEST-JS-A</title>
+    <link rel="stylesheet" type="text/css" href="CSS.css" />
+    <link rel="stylesheet" type="text/css" href="Globalxxxb.css" />
+</head>
+
+<body>
+    <!--主窗口-->
+    <div id="minesweeper" class="window">
+            <!--顶栏-->
+            <div class="window-title">
+    
+                <div id="move-mine" class="window-title-left-span">扫雷</div>
+    
+                <div class="window-title-right-icon">
+    
+                    <span class="m-point3"></span>
+    
+                </div>
+    
+            </div>
+            <!--工作区域-->
+            <div class="window-container">
+                <!--设置选项-->
+                <div id="option">
+                    <!--设置菜单列表-->
+                    <div id="s-list">
+                        
+                        <ul>
+                            <li id="s-restart">重新开始</li>
+    
+                            <li>难度<i class="spot"></i>
+                                <ul>
+                                    <li id="s-normal">初级</li>
+                                    <li id="s-middle">中级</li>
+                                    <li id="s-hard">高级</li>
+                                </ul>
+                            </li>
+                            <li>背景<i class="spot"></i>
+                                <ul>
+                                    <li id="s-blue-bg">蓝色</li>
+                                    <li id="s-red-bg">红色</li>
+                                    <li id="s-green-bg">绿色</li>
+                                </ul>
+                            </li>
+    
+                            <li id="s-games-info">统计信息</li>
+    
+                            <li id="s-about-games">关于</li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!--顶部信息-->
+                <div id="topTools">
+                    <div class="toolBox"><span class="label">TIME</span><br><span id="timer">0</span></div>
+                    <div class="toolBox"><span class="label">BOMBS</span><br><span id="mineNum">&nbsp</span></div>
+                </div>
+    
+                <!--格子工作区域-->
+                <table id="desk"></table>
+            </div>
+        </div>
+        <!--END-->
+    
+        <!--获胜窗口-->
+        <div id="games-win-window" class="window">
+    
+            <div class="window-title">
+                <div  id="move-win" class="window-title-left-span">提示</div>
+                <div class="window-title-right-icon">
+                    <span class="point3"></span>
+                </div>
+            </div>
+    
+            <div class="window-container">
+    
+                <div id="games-win-content">
+                    <span>赢了</span><span id="spendTime"></span>
+                </div>
+    
+            </div>
+        </div>
+    
+        <!--游戏信息统计-->
+        <div id="games-info-window" class="window">
+    
+            <div class="window-title">
+                <div  id="move-info" class="window-title-left-span">统计信息</div>
+                <div class="window-title-right-icon">
+                    <span class="point3"></span>
+                </div>
+            </div>
+    
+            <div class="window-container">
+    
+                <div id="contentBox">
+                    <table>
+                        <tr>
+                            <td id="normal-info">初级</td>
+                            <td id="middle-info">中级</td>
+                            <td id="hard-info">高级</td>
+                        </tr>
+                    </table>
+                    <div id="threeInfo">
+                        <div id="win5">
+                            <span>最佳成绩</span>
+                            <ul>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                        <div id="win5info">
+                            <ul>
+                                <li>总盘：<span></span></li>
+                                <li>已胜：<span></span></li>
+                                <li>胜率：<span></span></li>
+                                <li>连胜：<span></span></li>
+                                <li>连败：<span></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!--关于游戏-->
+        <div id="about-games-window" class="window">
+    
+            <div class="window-title">
+                <div  id="move-about" class="window-title-left-span">关于</div>
+                <div class="window-title-right-icon">
+                    <span class="point3"></span>
+                </div>
+            </div>
+    
+            <div class="window-container">
+                <div id="about-games-content">
+                    <p>仅在 <span style="font-weight : bold">Firefox 58.0.1</span> 和 <span style="font-weight : bold">Chrome 64.0.3282.140</span> 浏览器上运行正常，其它浏览器未测试。所以运行此程序至少需要上述两个版本或以上的浏览器。</p>
+                    <p>因为作者的编程水平有限，程序在编写的过程中完全没有考虑兼容性问题，所以在IE浏览器（IE 11）上无法正常运行。</p>
+                    <hr/>
+                    <p>作者：<a target="_blank" href="http://weibo.com/333199500">张晓雷</a></p>
+                </div>
+            </div>
+        </div>
+    
+    <script src="include/func_file.js"></script>
+    <!--功能函数集合-->
+    <script src="include/log001.js"></script>
+    <!--页面输出函数-->
+    <script src="Js-test.js"></script>
+
+    <script src="tools001.js"></script>
+
+    <!--脚本代码测试函数-->
+</body>
+
+</html>
