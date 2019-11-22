@@ -1,21 +1,15 @@
 
 /*-----------设置按钮----------------*/
 
+
 #minesweeper {
     user-select:none;
     -webkit-user-select: none;
 }
 
-
-
-
-
-
-
-
 /*---------------设置按钮和选项----------------------*/
 
-#option{
+#opt{
     display: block;
     position: absolute;
     left : 2px;
@@ -26,16 +20,17 @@
     width : 30px;
 }
 
-#option:hover{
+#opt:hover{
     background-color: #DFD9D9;
 }
 
+/*
 #option:hover>#s-list{
     display: block;
 }
+*/
 
-
-#option:before{
+#opt:before{
     content: "";
     position: absolute;
     border-top : 1px solid #333;
@@ -45,7 +40,7 @@
     box-shadow:  0 5px #333, 0 10px #333;
 }
 
-#s-list{
+#opt-list{
     font-size: 0.9em;
     position: relative;
     color : #333;
@@ -55,7 +50,7 @@
     z-index: 11;
 }
 
-#s-list ul{
+#opt-list ul{
     padding: 3px 4px 3px 5px;
     width : 4.5em;
     background-color: #F5F5F5;
@@ -63,7 +58,7 @@
     border-radius: 3px;
 }
 
-#s-list ul li{
+#opt-list ul li{
     position: relative;
     list-style: none;
     text-align: left;
@@ -72,15 +67,15 @@
     padding-left: 2px;
 }
 
-#s-list li:hover{
+#opt-list li:hover{
     background-color: skyblue;
 }
 
-#s-list ul li:hover ul{
+#opt-list ul li:hover ul{
     display: block;
 }
 
-#s-list ul ul {
+#opt-list ul ul {
     z-index: 12;
     border : 1px solid gray;
     position: absolute;
@@ -92,7 +87,7 @@
     box-shadow: -1px 0 5px #999, 1px 1px 8px #555;
 }
 
-#s-list ul li>ul{
+#opt-list ul li>ul{
     display: none;
 }
 
@@ -111,7 +106,6 @@
     box-shadow: 1px 1px gray,2px 2px gray,3px 3px gray,4px 4px gray,
     3px 5px gray, 2px 6px gray, 1px 7px gray, 0px 8px gray;
 }
-
 
 
 /*---------------------顶部信息栏---------------------*/

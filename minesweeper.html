@@ -3,11 +3,12 @@
 
 <head>
     <title>TEST-JS-A</title>
-    <link rel="stylesheet" type="text/css" href="CSS.css" />
-    <link rel="stylesheet" type="text/css" href="Globalxxxb.css" />
+    <link rel="stylesheet" type="text/css" href="globalstyle.css" />
+    <link rel="stylesheet" type="text/css" href="gamestyle.css" />
 </head>
 
 <body>
+
     <!--主窗口-->
     <div id="minesweeper" class="window">
             <!--顶栏-->
@@ -25,12 +26,12 @@
             <!--工作区域-->
             <div class="window-container">
                 <!--设置选项-->
-                <div id="option">
+                <div id="opt">
                     <!--设置菜单列表-->
-                    <div id="s-list">
+                    <div id="opt-list">
                         
                         <ul>
-                            <li id="s-restart">重新开始</li>
+                            <li id="opt-restart">重新开始</li>
     
                             <li>难度<i class="spot"></i>
                                 <ul>
@@ -47,9 +48,9 @@
                                 </ul>
                             </li>
     
-                            <li id="s-games-info">统计信息</li>
+                            <li id="opt-info">统计信息</li>
     
-                            <li id="s-about-games">关于</li>
+                            <li id="opt-about">关于</li>
                         </ul>
                     </div>
                 </div>
@@ -68,7 +69,6 @@
     
         <!--获胜窗口-->
         <div id="games-win-window" class="window">
-    
             <div class="window-title">
                 <div  id="move-win" class="window-title-left-span">提示</div>
                 <div class="window-title-right-icon">
@@ -77,11 +77,9 @@
             </div>
     
             <div class="window-container">
-    
                 <div id="games-win-content">
                     <span>赢了</span><span id="spendTime"></span>
                 </div>
-    
             </div>
         </div>
     
@@ -150,15 +148,9 @@
             </div>
         </div>
     
-    <script src="include/func_file.js"></script>
-    <!--功能函数集合-->
-    <script src="include/log001.js"></script>
-    <!--页面输出函数-->
-    <script src="Js-test.js"></script>
-
-    <script src="tools001.js"></script>
-
-    <!--脚本代码测试函数-->
+    <script src="gamejs01.js"></script>
+    <script src="gamejs02.js"></script>
+    
 </body>
 
 </html>

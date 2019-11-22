@@ -3,7 +3,7 @@ function $(name) {
 
     return ({
 
-        ele: document.querySelector(name),
+        ele: typeof name === 'string' ? document.querySelector(name) : name,
 
         attr: function (attr, val) {
             this.ele.setAttribute(attr, val)
@@ -26,8 +26,24 @@ function $(name) {
         text: function (val) {
             this.ele.innerText = val;
         },
+
+        click: function (fn) {
+            this.ele.addEventListener('click', fn, false);
+        },
+
+        movein: function (fn) {
+            this.ele.addEventListener('mouseover', fn, false);
+        },
+
+        moveout: function (fn) {
+            this.ele.addEventListener('mouseout', fn, false);
+        }
     })
 }
+
+
+let timer = new createTimer('#timer')
+
 
 
 document.querySelector('table').oncontextmenu = function (e) {
@@ -65,7 +81,7 @@ const Minesweeper = {
 
     table: Object.create(null),
 
-    init: function (ele, level) {
+    init: function (level) {
 
         this.level = level;
 
@@ -83,13 +99,46 @@ const Minesweeper = {
             this.bombsNumber = 99;
         }
 
-        this.ele_desk = document.querySelector(ele);
+        timer.reset();
+
+        this.ele_desk = document.querySelector("#desk");
+
+        this.ele_desk.innerHTML = '';
+
+        $('#mineNum').text(Minesweeper.bombsNumber);
 
         this.createDest();
 
         this.sweeper();
 
     },
+
+    restart: function (ny, nx) {
+
+        for (let y = 0; y < this._y; y++) {
+            for (let x = 0; x < this._x; x++) {
+                this.table[y][x].status = 0;
+                this.table[y][x].have = 0;
+                this.table[y][x].clue = 0;
+                this.table[y][x].select = 0;
+                this.table[y][x].normal();
+            }
+        }
+
+        this.start = false;
+
+        this.restOfCube = this._y * this._x;
+
+        this.restOfBombs = this.bombsNumber;
+
+        $('#mineNum').text(this.restOfBombs);
+
+        this.settleBombs(ny, nx);
+
+        this.markupAllBombs();
+
+    },
+
 
     getAround: function (y, x) {
         let a = [];
@@ -138,6 +187,8 @@ const Minesweeper = {
 
                     select: 0,
 
+                    td : td,
+
                     span: span,
 
                     normal: function () {
@@ -160,6 +211,7 @@ const Minesweeper = {
                         this.select = 1;
                         if (this.have === 1) { Minesweeper.restOfCube -= 1 }
                         Minesweeper.restOfBombs -= 1;
+                        $('#mineNum').text(Minesweeper.restOfBombs);
                     },
 
                     doubt: function () {
@@ -209,7 +261,10 @@ const Minesweeper = {
 
         document.addEventListener('mouseup', function (event) {
 
-            if (symbolx) symbolx.symbol_x_up();
+            if (symbolx) {
+                symbolx.symbol_x_up();
+                symbolx = null;
+            }
 
             if (save8.length) {
                 if (event.button === 2 || event.button === 0) {
@@ -221,6 +276,8 @@ const Minesweeper = {
 
             save8 = [];
 
+            that.checkWin();
+
         }, false)
 
         let that = this;
@@ -231,13 +288,15 @@ const Minesweeper = {
 
                 let cube;
 
-                this.table[y][x].span.addEventListener('mousedown', function (event) {
+                this.table[y][x].td.addEventListener('mousedown', function (event) {
 
                     cube = that.table[y][x];
 
                     if (event.buttons === 1) {
 
                         if (!that.start) {
+
+                            timer.start();
 
                             that.restart(y, x);
 
@@ -335,27 +394,12 @@ const Minesweeper = {
                         }
                     }
 
-                    $('#info').text(that.restOfBombs);
-
                     that.checkWin();
 
                 }, false)
             }
         }
     },
-
-    restart: function (y, x) {
-
-        this.restOfCube = this._y * this._x;
-
-        this.restOfBombs = this.bombsNumber;
-
-        this.settleBombs(y, x);
-
-        this.markupAllBombs();
-
-    },
-
 
     settleBombs: function (ny, nx) {
 
@@ -438,11 +482,49 @@ const Minesweeper = {
 
     checkWin : function () {
         if (this.restOfCube === 0) {
-            alert("WIN")
+            popupWinLoc('#games-win-window', 214, 139);
+            $('#games-win-window').show();
+            $('#spendTime').text(timer.getTime() + '秒')
+            timer.stop();
         }
     }
 }
 
-Minesweeper.init("#desk", 3)
+Minesweeper.init(1)
+
+
+function createTimer(id) {
+    this.id = document.querySelector(id);
+    var addTime = 0;
+    var timerStop;
+    var itv = function () {
+        addTime += 1;
+        this.id.innerText = addTime;
+    };
+
+    //开始计时
+    this.start = function () {
+        //扫雷点击开始直接从1秒开始计时
+        addTime += 1;
+        this.id.innerText = addTime;
+        timerStop = setInterval(itv.bind(this), 1000);
+    };
+    //时间停止
+    this.stop = function () {
+        clearInterval(timerStop);
+    };
+    //初始化计时
+    this.reset = function () {
+        clearInterval(timerStop);
+        this.id.innerText = 0;
+        addTime = 0;
+    };
+    //获取时间
+    this.getTime = function () {
+        return addTime;
+    }
+}
+
+
 
 

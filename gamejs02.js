@@ -1,0 +1,162 @@
+function moveElement(select, moveBody, marginX, marginY) {
+
+    let startX, startY, mousePress = false;
+
+    marginX = marginX || 5;
+    marginY = marginY || 8;
+
+    select = document.querySelector(select);
+    moveBody = document.querySelector(moveBody);
+
+    select.addEventListener("mousedown", function (event) {
+        startX = event.offsetX;
+        startY = event.offsetY;
+        mousePress = true;
+    })
+
+    document.addEventListener("mousemove", function (event) {
+        if (mousePress) {
+            moveBody.style.left = event.clientX - (startX + marginX + 2) + "px";
+            moveBody.style.top = event.clientY - (startY + marginY + 2) + "px";
+        }
+    }, false);
+
+    document.addEventListener("mouseup", function () {
+        mousePress = false;
+    }, false);
+}
+
+
+moveElement("#move-mine", "#minesweeper");
+moveElement("#move-win", "#games-win-window");
+moveElement("#move-info", "#games-info-window");
+moveElement("#move-about", "#about-games-window");
+
+document.querySelectorAll('.point3').forEach(function (item) {
+    item.addEventListener('click', function () {
+        $(this.parentElement.parentElement.parentElement).hide();
+    }, false)
+})
+
+
+function $(name) {
+
+    return ({
+
+        ele: typeof name === 'string' ? document.querySelector(name) : name,
+
+        attr: function (attr, val) {
+            this.ele.setAttribute(attr, val)
+        },
+
+        css: function (obj) {
+            for (let key in obj) {
+                this.ele.style[key] = obj[key];
+            }
+        },
+
+        show: function () {
+            this.ele.style.display = "block";
+        },
+
+        hide: function () {
+            this.ele.style.display = "none";
+        },
+
+        text: function (val) {
+            this.ele.innerText = val;
+        },
+
+        click: function (fn) {
+            this.ele.addEventListener('click', fn, false);
+        },
+
+        movein: function (fn) {
+            this.ele.addEventListener('mouseover', fn, false);
+        },
+
+        moveout: function (fn) {
+            this.ele.addEventListener('mouseout', fn, false);
+        }
+    })
+}
+
+
+let ui = {
+    opt : $('#opt').ele,
+    opt_list : $('#opt-list').ele,
+    minesweeper : $('#minesweeper').ele,
+}
+
+$(ui.opt).movein(function () {
+    $(ui.opt_list).show();
+})
+
+$(ui.opt).moveout(function () {
+    $(ui.opt_list).hide();
+})
+
+$('#opt-restart').click(function () {
+
+    Minesweeper.restart();
+
+    $(ui.opt_list).hide();
+})
+
+$('#opt-about').click(function () {
+
+    popupWinLoc('#about-games-window', 340, 224)
+
+    $('#about-games-window').show();
+
+    $(ui.opt_list).hide();
+})
+
+$('#opt-info').click(function () {
+
+    popupWinLoc('#games-info-window', 414, 284)
+
+    $('#games-info-window').show();
+
+    $(ui.opt_list).hide();
+})
+
+function popupWinLoc(name, width, height) {
+    winsize = document.querySelector(name);
+    let m = ui.minesweeper;
+    let w = m.offsetWidth;
+    let h = m.offsetHeight;
+    let y = m.offsetTop;
+    let x = m.offsetLeft;
+    winsize.style.left = (x + w / 2) - width / 2 + 'px';
+    winsize.style.top = (y + h / 2) - height / 2 + 'px';
+}
+
+$('#s-normal').click(function () {
+
+    Minesweeper.init(1);
+
+    Minesweeper.restart();
+
+    $(ui.opt_list).hide();
+})
+
+$('#s-middle').click(function () {
+
+    Minesweeper.init(2);
+
+    Minesweeper.restart();
+
+    $(ui.opt_list).hide();
+})
+
+$('#s-hard').click(function () {
+
+    Minesweeper.init(3);
+
+    Minesweeper.restart();
+
+    $(ui.opt_list).hide();
+})
+
+
