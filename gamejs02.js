@@ -98,7 +98,7 @@ $(ui.opt).moveout(function () {
 
 $('#opt-restart').click(function () {
 
-    Minesweeper.restart();
+    Minesweeper.reset();
 
     $(ui.opt_list).hide();
 })
@@ -136,8 +136,6 @@ $('#s-normal').click(function () {
 
     Minesweeper.init(1);
 
-    Minesweeper.restart();
-
     $(ui.opt_list).hide();
 })
 
@@ -145,16 +143,12 @@ $('#s-middle').click(function () {
 
     Minesweeper.init(2);
 
-    Minesweeper.restart();
-
     $(ui.opt_list).hide();
 })
 
 $('#s-hard').click(function () {
 
     Minesweeper.init(3);
-
-    Minesweeper.restart();
 
     $(ui.opt_list).hide();
 })

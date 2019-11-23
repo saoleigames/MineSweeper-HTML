@@ -160,6 +160,7 @@
 .basics{
     display: inline-block;
     position: absolute;
+    font-weight: bold;
     left: 0;
     top : 0;
     width : 100%;

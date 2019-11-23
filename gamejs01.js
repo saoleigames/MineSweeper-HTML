@@ -44,20 +44,19 @@ function $(name) {
 
 let timer = new createTimer('#timer')
 
-
-
-document.querySelector('table').oncontextmenu = function (e) {
-    e.preventDefault();
-}
-
+document.querySelectorAll(".window").forEach(function (box) {
+    box.oncontextmenu = function (e) {
+        e.preventDefault();
+    }
+})
 
 function random(begin, end) {
     return parseInt(Math.random() * (end - begin + 1) + begin);
 }
 
-function haveArr(arr, arrlist) {
-    for (let item of arrlist) {
-        if (arr.toString() === item.toString()) {
+function haveArr(a, al) {
+    for (let item of al) {
+        if (a.toString() === item.toString()) {
             return true;
         }
     }
@@ -67,7 +66,7 @@ const Minesweeper = {
 
     bombsNumber: undefined,
 
-    start: false,
+    begin: false,
 
     level: undefined,
 
@@ -99,21 +98,37 @@ const Minesweeper = {
             this.bombsNumber = 99;
         }
 
+        this.begin = false;
+
         timer.reset();
 
+        //重置表格单元
         this.ele_desk = document.querySelector("#desk");
-
         this.ele_desk.innerHTML = '';
-
-        $('#mineNum').text(Minesweeper.bombsNumber);
-
         this.createDest();
-
         this.sweeper();
+
+
+        //重新显示雷的剩余数量
+        this.restOfBombs = this.bombsNumber;
+        $('#mineNum').text(this.restOfBombs);
+
+        //方块的所有数量
+        this.restOfCube = this._y * this._x;
 
     },
 
-    restart: function (ny, nx) {
+    start: function (ny, nx) {
+
+        timer.start();
+
+        this.settleBombs(ny, nx);
+
+        this.markupAllBombs();
+
+    },
+
+    reset: function () {
 
         for (let y = 0; y < this._y; y++) {
             for (let x = 0; x < this._x; x++) {
@@ -125,17 +140,16 @@ const Minesweeper = {
             }
         }
 
-        this.start = false;
+        timer.reset();
 
-        this.restOfCube = this._y * this._x;
+        this.begin = false;
 
+        //重新显示雷的剩余数量
         this.restOfBombs = this.bombsNumber;
-
         $('#mineNum').text(this.restOfBombs);
-
-        this.settleBombs(ny, nx);
-
-        this.markupAllBombs();
+        
+        //方块的所有数量
+        this.restOfCube = this._y * this._x;
 
     },
 
@@ -201,7 +215,21 @@ const Minesweeper = {
                     open: function () {
                         this.span.setAttribute('class', 'basics bg')
                         this.status = 1;
-                        if (this.clue) { this.text(this.clue) }
+                        if (this.clue) {
+                            switch (this.clue) {
+                                //颜色按照win7系统自带的扫雷数字设置
+                                case 1: this.span.style.color = 'rgb(65,80,190)'; break;
+                                case 2: this.span.style.color = 'rgb(30,100,5)'; break;
+                                case 3: this.span.style.color = 'rgb(170,5,5)'; break;
+                                case 4: this.span.style.color = 'rgb(15,15,140)'; break;
+                                case 5: this.span.style.color = 'rgb(125,5,5)'; break;
+                                case 6: this.span.style.color = 'rgb(5,125,125)'; break;
+                                case 7: this.span.style.color = 'rgb(170,5,5)'; break;
+                                case 8: this.span.style.color = 'rgb(170,5,5)'; break;
+                                default: console.log("clue error")
+                            }
+                            this.text(this.clue) 
+                        }
                         Minesweeper.restOfCube -= 1;
                     },
 
@@ -221,6 +249,7 @@ const Minesweeper = {
                         this.span.innerText = "?"
                         Minesweeper.restOfCube += 1;
                         Minesweeper.restOfBombs += 1;
+                        $('#mineNum').text(Minesweeper.restOfBombs);
                     },
 
                     exp: function () {
@@ -276,8 +305,6 @@ const Minesweeper = {
 
             save8 = [];
 
-            that.checkWin();
-
         }, false)
 
         let that = this;
@@ -292,15 +319,16 @@ const Minesweeper = {
 
                     cube = that.table[y][x];
 
+
+                    //左键
                     if (event.buttons === 1) {
 
-                        if (!that.start) {
+                        if (!that.begin) {
 
-                            timer.start();
+                            that.start(y, x);
 
-                            that.restart(y, x);
+                            that.begin = true;
 
-                            that.start = true;
                         }
 
                         if (cube.status === 0) {
@@ -324,6 +352,7 @@ const Minesweeper = {
                             }
                         }
 
+                    //右键
                     } else if (event.buttons === 2) {
 
                         if (cube.select === 0) {
@@ -343,17 +372,20 @@ const Minesweeper = {
                             cube.normal();
                         }
 
+                    //双键
                     } else if (event.buttons === 3) {
 
                         let sum = 0, around = [];
 
                         that.getAround(y, x).forEach((p) => {
+
                             //status 为2，为标记小红旗状态
                             sum += (that.table[p[0]][p[1]].status === 2 ? 1 : 0)
 
                             around.push(that.table[p[0]][p[1]])
 
                         })
+
                         //如果统计已经标记的数值与提示信息相同，则为完成扫雷
 
                         if (sum === cube.clue) {
@@ -471,6 +503,9 @@ const Minesweeper = {
     },
 
     bombs: function () {
+
+        timer.stop();
+        
         for (let y = 0; y < this._y; y++) {
             for (let x = 0; x < this._x; x++) {
                 if (this.table[y][x].have === 1) {
@@ -484,8 +519,8 @@ const Minesweeper = {
         if (this.restOfCube === 0) {
             popupWinLoc('#games-win-window', 214, 139);
             $('#games-win-window').show();
-            $('#spendTime').text(timer.getTime() + '秒')
             timer.stop();
+            $('#spendTime').text(timer.getTime() + '秒')
         }
     }
 }
