@@ -1,45 +1,6 @@
 ﻿
-function $(name) {
 
-    return ({
 
-        ele: typeof name === 'string' ? document.querySelector(name) : name,
-
-        attr: function (attr, val) {
-            this.ele.setAttribute(attr, val)
-        },
-
-        css: function (obj) {
-            for (let key in obj) {
-                this.ele.style[key] = obj[key];
-            }
-        },
-
-        show: function () {
-            this.ele.style.display = "block";
-        },
-
-        hide: function () {
-            this.ele.style.display = "none";
-        },
-
-        text: function (val) {
-            this.ele.innerText = val;
-        },
-
-        click: function (fn) {
-            this.ele.addEventListener('click', fn, false);
-        },
-
-        movein: function (fn) {
-            this.ele.addEventListener('mouseover', fn, false);
-        },
-
-        moveout: function (fn) {
-            this.ele.addEventListener('mouseout', fn, false);
-        }
-    })
-}
 
 
 let timer = new createTimer('#timer')
@@ -66,6 +27,7 @@ function haveArr(a, al) {
     }
 }
 
+const mouse = new DoubleMouse();
 
 const Minesweeper = {
 
@@ -262,8 +224,9 @@ const Minesweeper = {
                         this.span.setAttribute('class', 'basics cover')
                         this.status = 3;
                         this.select = 2;
+                        this.span.style.color = '#FFFFFF';
                         this.span.innerText = "?"
-                        Minesweeper.restOfCube += 1;
+                        if (this.have === 1) { Minesweeper.restOfCube += 1 }
                         Minesweeper.restOfBombs += 1;
                         $('#mineNum').text(Minesweeper.restOfBombs);
                     },
@@ -329,92 +292,107 @@ const Minesweeper = {
 
             for (let x = 0; x < this._x; x++) {
 
-                let cube;
-
                 //添加到td而不添加到span，是因为添加span会在边界处无事件相应
                 this.table[y][x].td.addEventListener('mousedown', function (event) {
 
-                    /*
+                    /* 
                     that === Minesweeper。 不想更改 mousedown 事件的 this, 用一个 that 来代替 this。
-                   
-                    event.buttons属性有一个问题，如果左右键同时按下，会先触发一个左键，再触发两次同时按。我不知道这是API特性，
-                    还是我浏览器的问题。我的电脑浏览器是基于 Chromium 的Microsoft Edge BETA 最新版（版本 79.0.309.30 (官方
-                    内部版本) beta (64 位)，系统是盗版的windows7旗舰版。
 
-                    这样导致目前如果双键同时在一个未打开的方块上按下，还是会触发一次左键事件，导致这个方块被打开。后来经过一番
-                    操作，我认为就酱紫，又不是不能玩。
+                    和电脑上不同，没有实现左键松开扫雷功能，原因是用 DoubleMouse 实现的左右键一起动作
+                    会有20毫秒的延时。也可以再通过其实现一个双键同时松开的动作，但这意味着要再损失20毫秒。
 
-                    我尝试简单的实现了一个利用button属性来模拟同时按下的功能，但是用起来并不好，因为mousedown事件按下即触发，
-                    而我实现的原理即通过异步延时完成，通过比对同时按下按键的时间来判断。这就会导致按下键以后有一个时间间隔才
-                    能真正触发事件，这时候鼠标可能已经移出本该触发区域，导致错误。而且还利用了timeStamp 属性，我不太确定这个
-                    属性浏览器的支持情况。事实上基于timeStamp和buttons属性，我也实现了一个同时按下的事件，同样通过异步延时
-                    计算，屏蔽第一次事件实现。我一直觉得，好的功能实现也是好看的，而这两个功能实现像一坨屎，算了。
-                    
-                    后来我又发现系统扫雷的左键事件是松开后触发，而在移动过程中还有动画效果，妈的，我放弃100%模拟电脑版扫雷！
+                    ...................mouseup, function () {
+
+                        ...button === 0
+
+                        mouse.left(function () {
+                            //左键动作
+                        })
+
+                        ..button === 1
+
+                        mouse.right(function () {}) //空函数，用于激活时间
+
+                        mouse.together(function () {
+                            一起松开
+                        })
+                    }
                     */
-
+                
                     //游戏已经结束，禁止操作
                     if (that.end) {
                         return;
                     }
                     //获得当前方块的对象
-                    cube = that.table[y][x];
+                    let cube = that.table[y][x];
 
-                    if (event.buttons === 1) {
+                    if (event.button === 0) {
 
-                        if (!that.begin) {
+                        mouse.left(function () {
 
-                            that.start(y, x);
+                            if (!that.begin) {
 
-                            that.begin = true;
-
-                            that.end = false;
-
-                        }
-
-                        if (cube.status === 0) {
-
-                            if (cube.have === 1) {
-
-                                that.bombs();
-
-                            } else {
-
-                                if (cube.have === 2) {
-
-                                    cube.open();
-
+                                that.start(y, x);
+    
+                                that.begin = true;
+    
+                                that.end = false;
+    
+                            }
+    
+                            if (cube.status === 0) {
+    
+                                if (cube.have === 1) {
+    
+                                    that.bombs();
+    
                                 } else {
-
-                                    cube.open();
-
-                                    that.uncoverEmpty();
+    
+                                    if (cube.have === 2) {
+    
+                                        cube.open();
+    
+                                    } else {
+    
+                                        cube.open();
+    
+                                        that.uncoverEmpty();
+                                    }
                                 }
                             }
-                        }
 
-                    } else if (event.buttons === 2) {
+                            that.checkWin();
+    
+                        })
 
-                        if (cube.select === 0) {
+                    } else if (event.button === 2) {
 
-                            if (cube.status === 0) {
+                        mouse.right(function () {
 
-                                cube.markup();
+                            if (cube.select === 0) {
 
+                                if (cube.status === 0) {
+    
+                                    cube.markup();
+    
+                                }
+    
+                            } else if (cube.select === 1) {
+    
+                                cube.doubt();
+    
+                            } else if (cube.select === 2) {
+    
+                                cube.normal();
                             }
 
-                        } else if (cube.select === 1) {
+                            that.checkWin();
 
-                            cube.doubt();
+                        })
 
-                        } else if (cube.select === 2) {
+                    }
 
-                            cube.normal();
-                        }
-
-                    } else if (event.buttons === 3) {
-
-                        //同时按下左右键
+                    mouse.together(function () {
 
                         let sum = 0, around = [];
 
@@ -474,10 +452,10 @@ const Minesweeper = {
                                 }
                             }
                         }
-                    }
 
-                    that.checkWin();
+                        that.checkWin();
 
+                    })
                 }, false)
             }
         }

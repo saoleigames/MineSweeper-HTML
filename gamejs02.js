@@ -39,49 +39,6 @@ document.querySelectorAll('.point3').forEach(function (item) {
 })
 
 
-function $(name) {
-
-    return ({
-
-        ele: typeof name === 'string' ? document.querySelector(name) : name,
-
-        attr: function (attr, val) {
-            this.ele.setAttribute(attr, val)
-        },
-
-        css: function (obj) {
-            for (let key in obj) {
-                this.ele.style[key] = obj[key];
-            }
-        },
-
-        show: function () {
-            this.ele.style.display = "block";
-        },
-
-        hide: function () {
-            this.ele.style.display = "none";
-        },
-
-        text: function (val) {
-            this.ele.innerText = val;
-        },
-
-        click: function (fn) {
-            this.ele.addEventListener('click', fn, false);
-        },
-
-        movein: function (fn) {
-            this.ele.addEventListener('mouseover', fn, false);
-        },
-
-        moveout: function (fn) {
-            this.ele.addEventListener('mouseout', fn, false);
-        }
-    })
-}
-
-
 let ui = {
     opt : $('#opt').ele,
     opt_list : $('#opt-list').ele,
