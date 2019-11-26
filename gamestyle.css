@@ -323,7 +323,7 @@
     position: absolute;
     display: inline-block;
     padding: 0 3px;
-    left: 50px;
+    left: 63px;
     top : 23px;
     background-color: white;
 }
@@ -340,7 +340,7 @@
 }
 
 #contentBox #threeInfo #win5 ul{
-    width : 110px;
+    width : 123px;
     height: 115px;
     padding: 0 0 0 5px;
     border : 1px solid #AAA;

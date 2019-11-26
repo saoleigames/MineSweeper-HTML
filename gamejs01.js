@@ -534,7 +534,7 @@ const Minesweeper = {
 
         timer.stop();
         this.end = true;
-
+        lostSaveGameData(this.level);
         for (let y = 0; y < this._y; y++) {
             for (let x = 0; x < this._x; x++) {
                 if (this.table[y][x].have === 1) {
@@ -551,44 +551,260 @@ const Minesweeper = {
             timer.stop();
             this.end = true;
             $('#spendTime').text(timer.getTime() + '秒')
+            winSaveGameData(this.level);
         }
     }
 }
 
-Minesweeper.init(1)
+function winSaveGameData (level) {
+    let item;
+    if (level === 1) {
+        item = localGameData.level1;
+    } else if (level === 2) {
+        item = localGameData.level2;
+    } else if (level === 3) {
+        item = localGameData.level3;
+    }
+    item.totalBout += 1;
+    item.winsBout += 1;
+    item.c_WinNow += 1;
+    if (item.c_WinNow > item.c_WinPast) {
+        item.c_WinPast = item.c_WinNow;
+    }
+    item.bestResult5.push(timer.getTime() + ':' + new Date().getTime());
+    item.bestResult5.sort(sortControl);
+    if (item.bestResult5.length > 5) {
+        item.bestResult5.pop();
+    }
+    saveGameDataToLocal();
+}
 
+function lostSaveGameData(level) {
+    let item;
+    if (level === 1) {
+        item = localGameData.level1;
+    } else if (level === 2) {
+        item = localGameData.level2;
+    } else if (level === 3) {
+        item = localGameData.level3;
+    }
+    item.totalBout += 1;
+    item.c_WinNow = 0;
+    item.c_LostNow += 1;
+    if (item.c_LostNow > item.c_LostPast) {
+        item.c_LostPast = item.c_LostNow;
+    }
+    saveGameDataToLocal();
+}
 
-function createTimer(id) {
-    this.id = document.querySelector(id);
-    var addTime = 0;
-    var timerStop;
-    var itv = function () {
-        addTime += 1;
-        this.id.innerText = addTime;
-    };
-
-    //开始计时
-    this.start = function () {
-        //扫雷点击开始直接从1秒开始计时
-        addTime += 1;
-        this.id.innerText = addTime;
-        timerStop = setInterval(itv.bind(this), 1000);
-    };
-    //时间停止
-    this.stop = function () {
-        clearInterval(timerStop);
-    };
-    //初始化计时
-    this.reset = function () {
-        clearInterval(timerStop);
-        this.id.innerText = 0;
-        addTime = 0;
-    };
-    //获取时间
-    this.getTime = function () {
-        return addTime;
+function sortControl(a, b) {                                
+    let ia, fa, ib, fb;
+    ia = parseInt(a.slice(0, a.indexOf(":")));
+    fa = parseInt(a.slice(a.indexOf(":") + 1));
+    ib = parseInt(b.slice(0, b.indexOf(":")));
+    fb = parseInt(b.slice(b.indexOf(":") + 1));
+    if (ia !== ib) {
+        return ia - ib;
+    } else {
+        return fa - fb;
     }
 }
+
+function formatTime(val) {
+    let d = val.split(':');
+    let t = new Date();
+    t.setTime(d[1]);
+    return ({
+        'date' : d[0] + "s : " + t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate(),
+        'time' : d[0] + "s : " + t.getFullYear() + "年" + (t.getMonth() + 1) + "月" + t.getDate() + '日 ' + t.getHours() + '点' + t.getMinutes() + '分'
+    })
+}
+
+//让窗口具备移动能力
+moveElement("#move-mine", "#minesweeper");
+moveElement("#move-win", "#games-win-window");
+moveElement("#move-info", "#games-info-window");
+moveElement("#move-about", "#about-games-window");
+
+//所有关闭按钮的事件
+document.querySelectorAll('.point3').forEach(function (item) {
+    item.addEventListener('click', function () {
+        $(this.parentElement.parentElement.parentElement).hide();
+    }, false)
+})
+//所有弹出窗口的定位
+function popupWinLoc(name, width, height) {
+    winsize = document.querySelector(name);
+    let m = ui.minesweeper;
+    let w = m.offsetWidth;
+    let h = m.offsetHeight;
+    let y = m.offsetTop;
+    let x = m.offsetLeft;
+    winsize.style.left = (x + w / 2) - width / 2 + 'px';
+    winsize.style.top = (y + h / 2) - height / 2 + 'px';
+}
+
+//初始数据
+let initGameData = {
+
+    startLevel : 1,
+
+    level1 : {
+        bestResult5 : [],
+        totalBout : 0,
+        winsBout : 0,
+        c_WinNow : 0,
+        c_WinPast : 0,
+        c_LostNow : 0,
+        c_LostPast : 0,
+    },
+
+    level2 : {
+        bestResult5 : [],
+        totalBout : 0,
+        winsBout : 0,
+        c_WinNow : 0,
+        c_WinPast : 0,
+        c_LostNow : 0,
+        c_LostPast : 0,
+    },
+
+    level3 : {
+        bestResult5 : [],
+        totalBout : 0,
+        winsBout : 0,
+        c_WinNow : 0,
+        c_WinPast : 0,
+        c_LostNow : 0,
+        c_LostPast : 0,
+    },
+}
+
+function displayInfo(obj) {
+
+    ui.info_right[0].innerText = obj.totalBout;
+    ui.info_right[1].innerText = obj.winsBout;
+    ui.info_right[2].innerText = parseInt((obj.winsBout / obj.totalBout || 0) * 100) + "%";
+    ui.info_right[3].innerText = obj.c_WinPast;
+    ui.info_right[4].innerText = obj.c_LostPast;
+
+    for (let i = 0; i < 5; i++) {
+        ui.info_left[i].innerText = '';
+    }
+
+    let tmp;
+    
+    for (let i = 0; i < obj.bestResult5.length; i++) {
+        tmp = formatTime(obj.bestResult5[i]);
+        ui.info_left[i].innerText = tmp.date;
+        ui.info_left[i].title = tmp.time;
+    }
+
+}
+
+//载入本地数据
+let localGameData = JSON.parse(localStorage.getItem("swpGameData"));
+
+if (!localGameData) {
+    localGameData = initGameData;
+}
+//初始化游戏
+Minesweeper.init(localGameData.startLevel);
+//保存至本地
+function saveGameDataToLocal() {
+    if (window.localStorage) {
+        localStorage.setItem("swpGameData", JSON.stringify(localGameData))
+    } else {
+        console.error("Failed to store game record to local, [window.localStorage] object not found")
+    }
+}
+//所有UI对象的保存
+let ui = {
+    opt : $('#opt').ele,
+    opt_list : $('#opt-list').ele,
+    minesweeper : $('#minesweeper').ele,
+    opt_switch : {
+        l1 : $('#normal-info').ele,
+        l2 : $('#middle-info').ele,
+        l3 : $('#hard-info').ele,
+        bg : '#F6EFEF',
+        sbg : 'skyblue'
+    },
+    info_left : document.querySelectorAll('#win5 ul li'),
+    info_right : document.querySelectorAll('#win5info li span')
+}
+//选项菜单弹出
+$(ui.opt).movein(function () {
+    $(ui.opt_list).show();
+})
+//选项菜单移除消失
+$(ui.opt).moveout(function () {
+    $(ui.opt_list).hide();
+})
+//重新开始游戏
+$('#opt-restart').click(function () {
+    Minesweeper.reset();
+    $(ui.opt_list).hide();
+})
+//关于窗口
+$('#opt-about').click(function () {
+    popupWinLoc('#about-games-window', 340, 186)
+    $('#about-games-window').show();
+    $(ui.opt_list).hide();
+})
+//level 1 难度切换
+$('#s-normal').click(function () {
+    Minesweeper.init(1);
+    localGameData.startLevel = 1;
+    saveGameDataToLocal();
+    $(ui.opt_list).hide();
+})
+//level 2 难度切换
+$('#s-middle').click(function () {
+    Minesweeper.init(2);
+    localGameData.startLevel = 2;
+    saveGameDataToLocal();
+    $(ui.opt_list).hide();
+})
+//level 3 难度切换
+$('#s-hard').click(function () {
+    Minesweeper.init(3);
+    localGameData.startLevel = 3;
+    saveGameDataToLocal();
+    $(ui.opt_list).hide();
+})
+
+$('#opt-info').click(function () {
+    popupWinLoc('#games-info-window', 414, 284)
+    $('#games-info-window').show();
+    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.sbg)
+    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
+    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+    displayInfo(localGameData.level1)
+    $(ui.opt_list).hide();
+})
+
+$(ui.opt_switch.l1).click(function () {
+    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.sbg)
+    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
+    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+    displayInfo(localGameData.level1)
+})
+
+$(ui.opt_switch.l2).click(function () {
+    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
+    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.sbg)
+    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+    displayInfo(localGameData.level2)
+})
+
+$(ui.opt_switch.l3).click(function () {
+    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
+    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
+    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.sbg)
+    displayInfo(localGameData.level3)
+})
+
 
 
 
