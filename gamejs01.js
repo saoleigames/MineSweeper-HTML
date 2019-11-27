@@ -568,6 +568,7 @@ function winSaveGameData (level) {
     item.totalBout += 1;
     item.winsBout += 1;
     item.c_WinNow += 1;
+    item.c_LostNow = 0;
     if (item.c_WinNow > item.c_WinPast) {
         item.c_WinPast = item.c_WinNow;
     }
@@ -728,7 +729,7 @@ let ui = {
         l2 : $('#middle-info').ele,
         l3 : $('#hard-info').ele,
         bg : '#F6EFEF',
-        sbg : 'skyblue'
+        sbg : '#87CEEB'
     },
     info_left : document.querySelectorAll('#win5 ul li'),
     info_right : document.querySelectorAll('#win5info li span')
@@ -774,34 +775,50 @@ $('#s-hard').click(function () {
     $(ui.opt_list).hide();
 })
 
+function infoSwitch(level) {
+    if (level === 1) {
+        $(ui.opt_switch.l1).css('background-color',ui.opt_switch.sbg)
+        $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
+        $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+    } else if (level === 2) {
+        $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
+        $(ui.opt_switch.l2).css('background-color',ui.opt_switch.sbg)
+        $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+    } else if (level === 3) {
+        $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
+        $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
+        $(ui.opt_switch.l3).css('background-color',ui.opt_switch.sbg)
+    }
+}
+
 $('#opt-info').click(function () {
+    let item;
     popupWinLoc('#games-info-window', 414, 284)
     $('#games-info-window').show();
-    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.sbg)
-    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
-    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
-    displayInfo(localGameData.level1)
+    infoSwitch(Minesweeper.level)
+    if (Minesweeper.level === 1) {
+        item = localGameData.level1;
+    } else if (Minesweeper.level === 2) {
+        item = localGameData.level2;
+    } else if (Minesweeper.level === 3) {
+        item = localGameData.level3;
+    }
+    displayInfo(item)
     $(ui.opt_list).hide();
 })
 
 $(ui.opt_switch.l1).click(function () {
-    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.sbg)
-    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
-    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+    infoSwitch(1)
     displayInfo(localGameData.level1)
 })
 
 $(ui.opt_switch.l2).click(function () {
-    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
-    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.sbg)
-    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+    infoSwitch(2)
     displayInfo(localGameData.level2)
 })
 
 $(ui.opt_switch.l3).click(function () {
-    $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
-    $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
-    $(ui.opt_switch.l3).css('background-color',ui.opt_switch.sbg)
+    infoSwitch(3)
     displayInfo(localGameData.level3)
 })
 

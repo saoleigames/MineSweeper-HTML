@@ -25,7 +25,7 @@
 }
 
 /*
-#option:hover>#s-list{
+#opt:hover>#opt-list{
     display: block;
 }
 */
@@ -176,8 +176,12 @@
     background-color: #64B478;
 }
 
-.select-around{
+.cover:hover{
     background-color: rgb(164, 226, 181);
+}
+
+.select-around{
+    background-color: rgb(200, 200, 180);
 }
 
 .bg{
