@@ -160,7 +160,7 @@ const Minesweeper = {
             for (let x = 0; x < this._x; x++) {
                 td = document.createElement('td');
                 span = document.createElement('span');
-                span.setAttribute('class', 'basics cover');
+                span.setAttribute('class', 'basics c-cover');
                 td.appendChild(span);
 
                 this.table[y][x] = {
@@ -184,14 +184,14 @@ const Minesweeper = {
                     span: span,
 
                     normal: function () {
-                        this.span.setAttribute('class', 'basics cover')
+                        this.span.setAttribute('class', 'basics c-cover')
                         this.span.innerText = "";
                         this.status = 0;
                         this.select = 0;
                     },
 
                     open: function () {
-                        this.span.setAttribute('class', 'basics bg')
+                        this.span.setAttribute('class', 'basics c-bg')
                         this.status = 1;
                         if (this.clue) {
                             switch (this.clue) {
@@ -212,7 +212,7 @@ const Minesweeper = {
                     },
 
                     markup: function () {
-                        this.span.setAttribute('class', 'basics cover flag')
+                        this.span.setAttribute('class', 'basics c-flag')
                         this.status = 2;
                         this.select = 1;
                         if (this.have === 1) { Minesweeper.restOfCube -= 1 }
@@ -221,7 +221,7 @@ const Minesweeper = {
                     },
 
                     doubt: function () {
-                        this.span.setAttribute('class', 'basics cover')
+                        this.span.setAttribute('class', 'basics c-cover')
                         this.status = 3;
                         this.select = 2;
                         this.span.style.color = '#FFFFFF';
@@ -230,31 +230,47 @@ const Minesweeper = {
                         Minesweeper.restOfBombs += 1;
                         $('#mineNum').text(Minesweeper.restOfBombs);
                     },
-
+                    //游戏结束，雷显示
                     exp: function () {
-                        this.span.setAttribute('class', 'basics bg bomb')
+                        this.span.setAttribute('class', 'basics c-bomb')
+                    },
+                    //直接爆炸
+                    expNow : function () {
+                        this.span.setAttribute('class', 'basics c-expNow')
+                        this.select = 4;
+                    },
+                    //游戏结束，标记正确
+                    mkYesBomb : function () {
+                        this.span.setAttribute('class', 'basics c-mkyes')
+                    },
+                    //游戏结束，标记错误
+                    mkNoBomb: function () {
+                        this.span.setAttribute('class', 'basics c-mkno')
                     },
 
                     text: function (val) {
                         this.span.innerText = val;
                     },
-
+                    //X号
                     symbol_x: function () {
-                        this.span.setAttribute('class', 'basics bg symbol-x')
+                        this.span.setAttribute('class', 'basics c-bg-x')
                     },
-
+                    //消除X号
                     symbol_x_up: function () {
-                        this.span.setAttribute('class', 'basics bg')
+                        this.span.setAttribute('class', 'basics c-bg')
                     },
 
                     select_around: function () {
-                        this.span.setAttribute('class', 'basics select-around')
+                        this.span.setAttribute('class', 'basics c-bg')
                     },
 
                     select_around_up: function () {
-                        this.span.setAttribute('class', 'basics cover')
-                    }
+                        this.span.setAttribute('class', 'basics c-cover')
+                    },
 
+                    hover: function () {
+                        this.span.setAttribute('class', 'basics c-hover')
+                    }
                 }
 
                 tr.appendChild(td);
@@ -292,6 +308,20 @@ const Minesweeper = {
 
             for (let x = 0; x < this._x; x++) {
 
+                let cube = that.table[y][x];
+
+                this.table[y][x].td.addEventListener('mouseover', function () {
+                    if (!that.end && cube.status === 0) {
+                        cube.hover();
+                    }
+                })
+
+                this.table[y][x].td.addEventListener('mouseout', function () {
+                    if (!that.end && cube.status === 0) {
+                        cube.select_around_up();
+                    }
+                })
+
                 //添加到td而不添加到span，是因为添加span会在边界处无事件相应
                 this.table[y][x].td.addEventListener('mousedown', function (event) {
 
@@ -324,7 +354,7 @@ const Minesweeper = {
                         return;
                     }
                     //获得当前方块的对象
-                    let cube = that.table[y][x];
+                    //let cube = that.table[y][x];
 
                     if (event.button === 0) {
 
@@ -343,8 +373,10 @@ const Minesweeper = {
                             if (cube.status === 0) {
     
                                 if (cube.have === 1) {
+
+                                    cube.expNow();
     
-                                    that.bombs();
+                                    that.bombs(y, x);
     
                                 } else {
     
@@ -419,13 +451,19 @@ const Minesweeper = {
 
                                     } else if (item.have === 1) {
 
-                                        that.bombs();
+                                        item.expNow();
+
+                                        that.end = true;
+
+                                        //that.bombs();
 
                                     }
 
                                 }
 
                             }
+                            //这段代码是为了等待item.expNow执行
+                            if (that.end) { that.bombs()}
 
                         } else {
 
@@ -433,7 +471,7 @@ const Minesweeper = {
 
                                 around.push(cube);
 
-                            } else if (cube.status === 1 && cube.cube) {
+                            } else if (cube.status === 1 && cube.clue) {
 
                                 cube.symbol_x();
 
@@ -535,11 +573,22 @@ const Minesweeper = {
         timer.stop();
         this.end = true;
         lostSaveGameData(this.level);
+        let item;
         for (let y = 0; y < this._y; y++) {
             for (let x = 0; x < this._x; x++) {
-                if (this.table[y][x].have === 1) {
-                    this.table[y][x].exp();
-                }
+                item = this.table[y][x];
+                //有雷，且标记小红旗
+                if (item.status === 2 && item.have === 1) {
+                    item.mkYesBomb();
+                //无雷，标记错误
+                } else if (item.status === 2 && item.have !== 1) {
+                    item.mkNoBomb();
+                //当场爆炸，游戏已经结束，暂借selec属性实现功能。
+                } else if (item.select === 4) {
+                    item.expNow();
+                } else if (item.have === 1) {
+                    item.exp();
+                } 
             }
         }
     },
