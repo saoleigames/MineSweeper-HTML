@@ -139,40 +139,45 @@
 
 /***************格子区域*******************/
 
-
 #desk{
-    margin: 20px 35px;
-    border-collapse : collapse;
-    box-shadow: 0 0 1px #999;
+    margin: 25px 35px;
 }
 
-#desk tr td{
-    box-sizing: border-box;
-    cursor: default;
-    position: relative;
-    width : 23px;
-    height: 23px;
-    border : 1px solid #333;
+#desk .desk_border{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #444;
+    border: 1px solid #999;
 }
 
+#desk div{
+    display: flex;
+    justify-content: center;
+    margin-left: 1px;
+}
+
+#desk div:last-child{
+    margin-bottom: 1px;
+}
+
+#desk b{
+    display: inline-block;
+    text-align: center;
+    line-height: 22px;
+    width : 22px;
+    height: 22px;
+    margin-top: 1px;
+    margin-right: 1px;
+}
 
 /**默认的尺寸元素**/
 .basics{
-    display: inline-block;
-    position: absolute;
-    font-weight: bold;
-    font-size: 1.1em;
-    left: 0;
-    top : 0;
-    width : 100%;
-    height: 100%;
-    text-align: center;
-    line-height: 20px;
+    background-repeat: no-repeat;
+    background-image: url(swp01.png);
 }
 
-
 /********************弹出窗口********************/
-
 
 #games-win-window {
     position: absolute;
@@ -286,103 +291,55 @@
 #about-games-window{
     position: absolute;
     z-index: 101;
-    font-size: 0.8rem;
+    font-size: 0.8em;
     display: none;
 }
 
 #about-games-content{
-    width : 300px;
-    margin: 1em;
+    text-align: center;
+    margin: 2.6em 0;
 }
 
-
-
-
-
-
-
-
-
+#about-games-content img{
+    max-width: 70%;
+    height: auto;
+    box-shadow: 0 0 3px #777;
+}
 
 /***************************************test***************************************/
 .c-bg-x{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -176px 0;
 }
 
 
 .c-hover{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -154px 0;
 }
 
 .c-mkyes{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -132px 0;
 }
 
 .c-flag{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -110px 0;
 }
 
 .c-bomb{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -88px 0;
 }
 
 .c-expNow{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -66px 0;
 }
 
 .c-mkno{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -44px 0;
 }
 
 .c-cover{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: -22px 0;
 }
 
 .c-bg{
-    width : 22px;
-    height: 22px;
-    float: left;
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
     background-position: 0px 0;
 }

@@ -33,6 +33,9 @@ document.querySelector('elem').addEventListener('mousedown', function (event) {
 }
 
 */
+
+
+/*
 class DoubleMouse {
 
     constructor (gap) {
@@ -83,10 +86,7 @@ class DoubleMouse {
         this.togetherFn = callback;
     }
 }
-
-
-
-
+*/
 
 
 function $(name) {
@@ -134,7 +134,6 @@ function $(name) {
         }
     })
 }
-
 
 function createTimer(id) {
     this.id = document.querySelector(id);

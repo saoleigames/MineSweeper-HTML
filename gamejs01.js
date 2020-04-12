@@ -1,13 +1,5 @@
 ﻿
-
-
-
-
 let timer = new createTimer('#timer')
-
-let _int = function (n) {
-    return parseInt(n);
-}
 
 document.querySelectorAll(".window").forEach(function (box) {
     box.oncontextmenu = function (e) {
@@ -27,7 +19,7 @@ function haveArr(a, al) {
     }
 }
 
-const mouse = new DoubleMouse();
+//const mouse = new DoubleMouse();
 
 const Minesweeper = {
 
@@ -153,16 +145,19 @@ const Minesweeper = {
     },
 
     createDest: function () {
-        let tr, td, span;
+
+        let divBorder, divLine, b;
+
+        divBorder = document.createElement('div');
+
+        divBorder.setAttribute('class', 'desk_border')
+
         for (let y = 0; y < this._y; y++) {
-            tr = document.createElement('tr');
+            divLine = document.createElement('div');
             this.table[y] = Object.create(null);
             for (let x = 0; x < this._x; x++) {
-                td = document.createElement('td');
-                span = document.createElement('span');
-                span.setAttribute('class', 'basics c-cover');
-                td.appendChild(span);
-
+                b = document.createElement('b');
+                b.setAttribute('class', 'basics c-cover');
                 this.table[y][x] = {
 
                     // 0 ：默认   1 : 打开状态   2 : 标记小红旗   3 : 标记问号
@@ -179,9 +174,7 @@ const Minesweeper = {
                     */
                     select: 0,
 
-                    td: td,
-
-                    span: span,
+                    span: b,
 
                     normal: function () {
                         this.span.setAttribute('class', 'basics c-cover')
@@ -235,12 +228,12 @@ const Minesweeper = {
                         this.span.setAttribute('class', 'basics c-bomb')
                     },
                     //直接爆炸
-                    expNow : function () {
+                    expNow: function () {
                         this.span.setAttribute('class', 'basics c-expNow')
                         this.select = 4;
                     },
                     //游戏结束，标记正确
-                    mkYesBomb : function () {
+                    mkYesBomb: function () {
                         this.span.setAttribute('class', 'basics c-mkyes')
                     },
                     //游戏结束，标记错误
@@ -273,10 +266,13 @@ const Minesweeper = {
                     }
                 }
 
-                tr.appendChild(td);
+                //div.appendChild(b);
+                divLine.appendChild(b);
             }
-            this.ele_desk.appendChild(tr);
+            divBorder.appendChild(divLine);
+            //this.ele_desk.appendChild(div);
         }
+        this.ele_desk.appendChild(divBorder);
     },
 
     sweeper: function () {
@@ -310,45 +306,21 @@ const Minesweeper = {
 
                 let cube = that.table[y][x];
 
-                this.table[y][x].td.addEventListener('mouseover', function () {
+                this.table[y][x].span.addEventListener('mouseover', function () {
                     if (!that.end && cube.status === 0) {
                         cube.hover();
                     }
                 })
 
-                this.table[y][x].td.addEventListener('mouseout', function () {
+                this.table[y][x].span.addEventListener('mouseout', function () {
                     if (!that.end && cube.status === 0) {
                         cube.select_around_up();
                     }
                 })
 
-                //添加到td而不添加到span，是因为添加span会在边界处无事件相应
-                this.table[y][x].td.addEventListener('mousedown', function (event) {
 
-                    /* 
-                    that === Minesweeper。 不想更改 mousedown 事件的 this, 用一个 that 来代替 this。
+                this.table[y][x].span.addEventListener('mousedown', function (event) {
 
-                    和电脑上不同，没有实现左键松开扫雷功能，原因是用 DoubleMouse 实现的左右键一起动作
-                    会有20毫秒的延时。也可以再通过其实现一个双键同时松开的动作，但这意味着要再损失20毫秒。
-
-                    ...................mouseup, function () {
-
-                        ...button === 0
-
-                        mouse.left(function () {
-                            //左键动作
-                        })
-
-                        ..button === 1
-
-                        mouse.right(function () {}) //空函数，用于激活时间
-
-                        mouse.together(function () {
-                            一起松开
-                        })
-                    }
-                    */
-                
                     //游戏已经结束，禁止操作
                     if (that.end) {
                         return;
@@ -356,75 +328,67 @@ const Minesweeper = {
                     //获得当前方块的对象
                     //let cube = that.table[y][x];
 
-                    if (event.button === 0) {
+                    if (event.buttons === 1) {
 
-                        mouse.left(function () {
+                        //mouse.left(function () {
 
-                            if (!that.begin) {
+                        if (!that.begin) {
 
-                                that.start(y, x);
-    
-                                that.begin = true;
-    
-                                that.end = false;
-    
-                            }
-    
-                            if (cube.status === 0) {
-    
-                                if (cube.have === 1) {
+                            that.start(y, x);
 
-                                    cube.expNow();
-    
-                                    that.bombs(y, x);
-    
+                            that.begin = true;
+
+                            that.end = false;
+
+                        }
+
+                        if (cube.status === 0) {
+
+                            if (cube.have === 1) {
+
+                                cube.expNow();
+
+                                that.bombs(y, x);
+
+                            } else {
+
+                                if (cube.have === 2) {
+
+                                    cube.open();
+
                                 } else {
-    
-                                    if (cube.have === 2) {
-    
-                                        cube.open();
-    
-                                    } else {
-    
-                                        cube.open();
-    
-                                        that.uncoverEmpty();
-                                    }
+
+                                    cube.open();
+
+                                    that.uncoverEmpty();
                                 }
                             }
+                        }
 
-                            that.checkWin();
-    
-                        })
+                        that.checkWin();
 
-                    } else if (event.button === 2) {
+                    } else if (event.buttons === 2) {
 
-                        mouse.right(function () {
+                        if (cube.select === 0) {
 
-                            if (cube.select === 0) {
+                            if (cube.status === 0) {
 
-                                if (cube.status === 0) {
-    
-                                    cube.markup();
-    
-                                }
-    
-                            } else if (cube.select === 1) {
-    
-                                cube.doubt();
-    
-                            } else if (cube.select === 2) {
-    
-                                cube.normal();
+                                cube.markup();
+
                             }
 
-                            that.checkWin();
+                        } else if (cube.select === 1) {
 
-                        })
+                            cube.doubt();
 
-                    }
+                        } else if (cube.select === 2) {
 
-                    mouse.together(function () {
+                            cube.normal();
+                        }
+
+                        that.checkWin();
+
+                    } else if (event.buttons === 3) {
 
                         let sum = 0, around = [];
 
@@ -455,15 +419,13 @@ const Minesweeper = {
 
                                         that.end = true;
 
-                                        //that.bombs();
-
                                     }
 
                                 }
 
+                                if (that.end) { that.bombs() }
+
                             }
-                            //这段代码是为了等待item.expNow执行
-                            if (that.end) { that.bombs()}
 
                         } else {
 
@@ -492,8 +454,8 @@ const Minesweeper = {
                         }
 
                         that.checkWin();
+                    }
 
-                    })
                 }, false)
             }
         }
@@ -580,15 +542,15 @@ const Minesweeper = {
                 //有雷，且标记小红旗
                 if (item.status === 2 && item.have === 1) {
                     item.mkYesBomb();
-                //无雷，标记错误
+                    //无雷，标记错误
                 } else if (item.status === 2 && item.have !== 1) {
                     item.mkNoBomb();
-                //当场爆炸，游戏已经结束，暂借selec属性实现功能。
+                    //当场爆炸，游戏已经结束，暂借selec属性实现功能。
                 } else if (item.select === 4) {
                     item.expNow();
                 } else if (item.have === 1) {
                     item.exp();
-                } 
+                }
             }
         }
     },
@@ -605,7 +567,7 @@ const Minesweeper = {
     }
 }
 
-function winSaveGameData (level) {
+function winSaveGameData(level) {
     let item;
     if (level === 1) {
         item = localGameData.level1;
@@ -647,7 +609,7 @@ function lostSaveGameData(level) {
     saveGameDataToLocal();
 }
 
-function sortControl(a, b) {                                
+function sortControl(a, b) {
     let ia, fa, ib, fb;
     ia = parseInt(a.slice(0, a.indexOf(":")));
     fa = parseInt(a.slice(a.indexOf(":") + 1));
@@ -665,8 +627,8 @@ function formatTime(val) {
     let t = new Date();
     t.setTime(d[1]);
     return ({
-        'date' : d[0] + "s : " + t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate(),
-        'time' : d[0] + "s : " + t.getFullYear() + "年" + (t.getMonth() + 1) + "月" + t.getDate() + '日 ' + t.getHours() + '点' + t.getMinutes() + '分'
+        'date': d[0] + "s : " + t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate(),
+        'time': d[0] + "s : " + t.getFullYear() + "年" + (t.getMonth() + 1) + "月" + t.getDate() + '日 ' + t.getHours() + '点' + t.getMinutes() + '分'
     })
 }
 
@@ -697,36 +659,36 @@ function popupWinLoc(name, width, height) {
 //初始数据
 let initGameData = {
 
-    startLevel : 1,
+    startLevel: 1,
 
-    level1 : {
-        bestResult5 : [],
-        totalBout : 0,
-        winsBout : 0,
-        c_WinNow : 0,
-        c_WinPast : 0,
-        c_LostNow : 0,
-        c_LostPast : 0,
+    level1: {
+        bestResult5: [],
+        totalBout: 0,
+        winsBout: 0,
+        c_WinNow: 0,
+        c_WinPast: 0,
+        c_LostNow: 0,
+        c_LostPast: 0,
     },
 
-    level2 : {
-        bestResult5 : [],
-        totalBout : 0,
-        winsBout : 0,
-        c_WinNow : 0,
-        c_WinPast : 0,
-        c_LostNow : 0,
-        c_LostPast : 0,
+    level2: {
+        bestResult5: [],
+        totalBout: 0,
+        winsBout: 0,
+        c_WinNow: 0,
+        c_WinPast: 0,
+        c_LostNow: 0,
+        c_LostPast: 0,
     },
 
-    level3 : {
-        bestResult5 : [],
-        totalBout : 0,
-        winsBout : 0,
-        c_WinNow : 0,
-        c_WinPast : 0,
-        c_LostNow : 0,
-        c_LostPast : 0,
+    level3: {
+        bestResult5: [],
+        totalBout: 0,
+        winsBout: 0,
+        c_WinNow: 0,
+        c_WinPast: 0,
+        c_LostNow: 0,
+        c_LostPast: 0,
     },
 }
 
@@ -743,7 +705,7 @@ function displayInfo(obj) {
     }
 
     let tmp;
-    
+
     for (let i = 0; i < obj.bestResult5.length; i++) {
         tmp = formatTime(obj.bestResult5[i]);
         ui.info_left[i].innerText = tmp.date;
@@ -770,18 +732,18 @@ function saveGameDataToLocal() {
 }
 //所有UI对象的保存
 let ui = {
-    opt : $('#opt').ele,
-    opt_list : $('#opt-list').ele,
-    minesweeper : $('#minesweeper').ele,
-    opt_switch : {
-        l1 : $('#normal-info').ele,
-        l2 : $('#middle-info').ele,
-        l3 : $('#hard-info').ele,
-        bg : '#F6EFEF',
-        sbg : '#87CEEB'
+    opt: $('#opt').ele,
+    opt_list: $('#opt-list').ele,
+    minesweeper: $('#minesweeper').ele,
+    opt_switch: {
+        l1: $('#normal-info').ele,
+        l2: $('#middle-info').ele,
+        l3: $('#hard-info').ele,
+        bg: '#F6EFEF',
+        sbg: '#87CEEB'
     },
-    info_left : document.querySelectorAll('#win5 ul li'),
-    info_right : document.querySelectorAll('#win5info li span')
+    info_left: document.querySelectorAll('#win5 ul li'),
+    info_right: document.querySelectorAll('#win5info li span')
 }
 //选项菜单弹出
 $(ui.opt).movein(function () {
@@ -798,7 +760,7 @@ $('#opt-restart').click(function () {
 })
 //关于窗口
 $('#opt-about').click(function () {
-    popupWinLoc('#about-games-window', 340, 186)
+    popupWinLoc('#about-games-window', 414, 284)
     $('#about-games-window').show();
     $(ui.opt_list).hide();
 })
@@ -826,17 +788,17 @@ $('#s-hard').click(function () {
 
 function infoSwitch(level) {
     if (level === 1) {
-        $(ui.opt_switch.l1).css('background-color',ui.opt_switch.sbg)
-        $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
-        $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+        $(ui.opt_switch.l1).css('background-color', ui.opt_switch.sbg)
+        $(ui.opt_switch.l2).css('background-color', ui.opt_switch.bg)
+        $(ui.opt_switch.l3).css('background-color', ui.opt_switch.bg)
     } else if (level === 2) {
-        $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
-        $(ui.opt_switch.l2).css('background-color',ui.opt_switch.sbg)
-        $(ui.opt_switch.l3).css('background-color',ui.opt_switch.bg)
+        $(ui.opt_switch.l1).css('background-color', ui.opt_switch.bg)
+        $(ui.opt_switch.l2).css('background-color', ui.opt_switch.sbg)
+        $(ui.opt_switch.l3).css('background-color', ui.opt_switch.bg)
     } else if (level === 3) {
-        $(ui.opt_switch.l1).css('background-color',ui.opt_switch.bg)
-        $(ui.opt_switch.l2).css('background-color',ui.opt_switch.bg)
-        $(ui.opt_switch.l3).css('background-color',ui.opt_switch.sbg)
+        $(ui.opt_switch.l1).css('background-color', ui.opt_switch.bg)
+        $(ui.opt_switch.l2).css('background-color', ui.opt_switch.bg)
+        $(ui.opt_switch.l3).css('background-color', ui.opt_switch.sbg)
     }
 }
 
