@@ -190,12 +190,14 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width : 200px;
-    height: 100px;
+    width : 220px;
+    height: 140px;
 }
 
 #games-win-content span{
-    font-size: 1.2rem;
+    color: rgb(128, 185, 13);
+    font-size: 2.2em;
+    text-shadow: 5px 5px #ddd;
 }
 
 /****************信息统计***********************/
