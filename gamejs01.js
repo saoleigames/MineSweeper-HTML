@@ -557,7 +557,7 @@ const Minesweeper = {
 
     checkWin: function () {
         if (this.restOfCube === 0) {
-            popupWinLoc('#games-win-window', 214, 139);
+            popupWinLoc('#games-win-window', 237, 179);
             $('#games-win-window').show();
             timer.stop();
             this.end = true;
@@ -760,7 +760,7 @@ $('#opt-restart').click(function () {
 })
 //关于窗口
 $('#opt-about').click(function () {
-    popupWinLoc('#about-games-window', 414, 284)
+    popupWinLoc('#about-games-window', 414, 338)
     $('#about-games-window').show();
     $(ui.opt_list).hide();
 })
@@ -832,8 +832,3 @@ $(ui.opt_switch.l3).click(function () {
     infoSwitch(3)
     displayInfo(localGameData.level3)
 })
-
-
-
-
-

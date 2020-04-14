@@ -1,5 +1,12 @@
+html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 html {
-    font-size: 1rem;
+    font-size: 1em;
     font-family: "微软雅黑";
     background: rgb(255, 255, 255) url(background001.png) repeat fixed;
 }
@@ -41,7 +48,7 @@ body{
 .window-title-left-span{
     display: flex;
     cursor: move;
-    font-size: 0.8rem;
+    font-size: 0.8em;
     flex-grow: 1;
     padding-left: 5px;
 }

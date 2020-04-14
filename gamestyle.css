@@ -5,6 +5,7 @@
 #minesweeper {
     user-select:none;
     -webkit-user-select: none;
+    top: 3em;
 }
 
 /*---------------设置按钮和选项----------------------*/
