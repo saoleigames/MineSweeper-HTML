@@ -279,20 +279,12 @@ const Minesweeper = {
             sum = 0,
             that = this,
             leftUpLock = false,
-            allUpDone = false,
-            centerLock = false;
+            allUpDone = false;
 
         //消除动画
         function allUpDoneFunc() {
-            if (center) {
-                centerLock = true;
-                center.symbol_x();
-                setTimeout(()=> {
-                    center.symbol_x_up();
-                    center = undefined;
-                    centerLock = false;
-                }, 100)
-            }
+            if (that.end) { return }
+            if (center) { center.symbol_x_up();}
             for (let item of around) {
                 if (item.status === 0) {
                     item.select_around_up();
@@ -303,6 +295,10 @@ const Minesweeper = {
         }
         //清除动作
         function allUpWork() {
+            //执行这一个步的前提是 status === 1 && sum === clue
+            //收集around数据的条件是 status === 0，也就是遮盖的方块
+            //理论上到这一步，around里的数据都是空的，因为 sum === clue。但用户可能标错，所以一旦发现 have === 1 则说明触雷，游戏结束。
+            //bombs方法会对标记正确还是错误进行判断，并进行标识。
             for (let item of around) {
                 if (item.status === 0) {
                     if (item.have !== 1) {
@@ -313,8 +309,8 @@ const Minesweeper = {
                     }
                 }
             }
-            if (that.end) {that.bombs();}
             that.uncoverEmpty();
+            if (that.end) {that.bombs();}
             that.checkWin();
         }
 
@@ -373,6 +369,7 @@ const Minesweeper = {
                     })
 
                     if (cube.status === 1 && cube.clue) {
+                        cube.symbol_x();
                         center = cube;
                     } else if (cube.status === 0) {
                         around.push(cube);
@@ -450,9 +447,8 @@ const Minesweeper = {
                         if (cube.status === 0) {
                             cube.select_around_up();
                         }
-                        if (center && !centerLock) {
+                        if (center) {
                             center.symbol_x_up();
-                            center = null;
                         }
                         if (around.length) {
                             allUpDoneFunc();
