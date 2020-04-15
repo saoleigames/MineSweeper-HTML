@@ -265,117 +265,78 @@ const Minesweeper = {
                         this.span.setAttribute('class', 'basics c-hover')
                     }
                 }
-
-                //div.appendChild(b);
                 divLine.appendChild(b);
             }
             divBorder.appendChild(divLine);
-            //this.ele_desk.appendChild(div);
         }
         this.ele_desk.appendChild(divBorder);
     },
 
     sweeper: function () {
 
-        let save8 = [], symbolx;
+        let center,
+            around = [],
+            sum = 0,
+            that = this,
+            leftUpLock = false,
+            allUpDone = false,
+            centerLock = false;
 
-        document.addEventListener('mouseup', function (event) {
-
-            if (symbolx) {
-                symbolx.symbol_x_up();
-                symbolx = null;
+        //消除动画
+        function allUpDoneFunc() {
+            if (center) {
+                centerLock = true;
+                center.symbol_x();
+                setTimeout(()=> {
+                    center.symbol_x_up();
+                    center = undefined;
+                    centerLock = false;
+                }, 100)
             }
-
-            if (save8.length) {
-                if (event.button === 2 || event.button === 0) {
-                    save8.forEach(function (item) {
-                        item.select_around_up();
-                    })
+            for (let item of around) {
+                if (item.status === 0) {
+                    item.select_around_up();
                 }
             }
-
-            save8 = [];
-
-        }, false)
-        //给td添加鼠标事件，回调函数的this已经不等于Minesweeper，所以把this给that。
-        let that = this;
+            around = [];
+            sum = 0;
+        }
+        //清除动作
+        function allUpWork() {
+            for (let item of around) {
+                if (item.status === 0) {
+                    if (item.have !== 1) {
+                        item.open();
+                    } else if (item.have === 1) {
+                        item.expNow();
+                        that.end = true;
+                    }
+                }
+            }
+            if (that.end) {that.bombs();}
+            that.uncoverEmpty();
+            that.checkWin();
+        }
 
         for (let y = 0; y < this._y; y++) {
 
             for (let x = 0; x < this._x; x++) {
 
                 let cube = that.table[y][x];
+                //按下动作
+                cube.span.addEventListener('mousedown', function (event) {
 
-                this.table[y][x].span.addEventListener('mouseover', function () {
-                    if (!that.end && cube.status === 0) {
-                        cube.hover();
-                    }
-                })
-
-                this.table[y][x].span.addEventListener('mouseout', function () {
-                    if (!that.end && cube.status === 0) {
-                        cube.select_around_up();
-                    }
-                })
-
-
-                this.table[y][x].span.addEventListener('mousedown', function (event) {
-
-                    //游戏已经结束，禁止操作
-                    if (that.end) {
-                        return;
-                    }
-                    //获得当前方块的对象
-                    //let cube = that.table[y][x];
+                    if (that.end) { return }
 
                     if (event.buttons === 1) {
-
-                        //mouse.left(function () {
-
-                        if (!that.begin) {
-
-                            that.start(y, x);
-
-                            that.begin = true;
-
-                            that.end = false;
-
-                        }
-
-                        if (cube.status === 0) {
-
-                            if (cube.have === 1) {
-
-                                cube.expNow();
-
-                                that.bombs(y, x);
-
-                            } else {
-
-                                if (cube.have === 2) {
-
-                                    cube.open();
-
-                                } else {
-
-                                    cube.open();
-
-                                    that.uncoverEmpty();
-                                }
-                            }
-                        }
-
-                        that.checkWin();
+                        
+                        cube.select_around();
 
                     } else if (event.buttons === 2) {
-
+                        
                         if (cube.select === 0) {
 
-                            if (cube.status === 0) {
-
-                                cube.markup();
-
-                            }
+                            if (cube.status === 0) { cube.markup();}
 
                         } else if (cube.select === 1) {
 
@@ -384,79 +345,120 @@ const Minesweeper = {
                         } else if (cube.select === 2) {
 
                             cube.normal();
+
                         }
 
                         that.checkWin();
 
                     } else if (event.buttons === 3) {
+                        
+                        leftUpLock = true;
 
-                        let sum = 0, around = [];
+                        aroundCheck(y, x);
 
-                        that.getAround(y, x).forEach((p) => {
-
-                            //status 为2，为标记小红旗状态
-                            sum += (that.table[p[0]][p[1]].status === 2 ? 1 : 0)
-
-                            around.push(that.table[p[0]][p[1]])
-
-                        })
-
-                        if (cube.status === 1 && around.length && sum === cube.clue) {
-
-                            for (let item of around) {
-
-                                if (item.status === 0) {
-
-                                    if (item.have !== 1) {
-
-                                        item.open();
-
-                                        that.uncoverEmpty();
-
-                                    } else if (item.have === 1) {
-
-                                        item.expNow();
-
-                                        that.end = true;
-
-                                    }
-
-                                }
-
-                                if (that.end) { that.bombs() }
-
-                            }
-
-                        } else {
-
-                            if (cube.status === 0) {
-
-                                around.push(cube);
-
-                            } else if (cube.status === 1 && cube.clue) {
-
-                                cube.symbol_x();
-
-                                symbolx = cube;
-
-                            }
-
-                            for (let item of around) {
-
-                                if (item.status === 0) {
-
-                                    item.select_around();
-
-                                    save8.push(item);
-
-                                }
-                            }
-                        }
-
-                        that.checkWin();
                     }
 
                 }, false)
+
+                function aroundCheck(y, x) {
+
+                    let status;
+
+                    that.getAround(y, x).forEach((p) => {
+                        status = that.table[p[0]][p[1]].status;
+                        sum += (status === 2 ? 1 : 0)
+                        if (status === 0) {
+                            around.push(that.table[p[0]][p[1]])
+                        }
+                    })
+
+                    if (cube.status === 1 && cube.clue) {
+                        center = cube;
+                    } else if (cube.status === 0) {
+                        around.push(cube);
+                    }
+
+                    for (let item of around) {
+                        item.select_around(); 
+                    }
+                }
+
+                //松开动作
+                cube.span.addEventListener('mouseup', function (event) {
+                    if (that.end) { return }
+                    if (event.button === 0) {
+                        if (!leftUpLock) {
+                            leftUpLock = false;
+                            if (!that.begin) {
+                                that.start(y, x);
+                                that.begin = true;
+                                that.end = false;
+                            }
+                            if (cube.status === 0) {
+                                if (cube.have === 1) {
+                                    cube.expNow();
+                                    that.bombs(y, x);
+                                } else {
+                                    if (cube.have === 2) {
+                                        cube.open();
+                                    } else {
+                                        cube.open();
+                                        that.uncoverEmpty();
+                                    }
+                                }
+                            }
+                            that.checkWin();
+                        } else {
+                            if (!allUpDone) {
+                                if (cube.status === 1 && cube.clue === sum) {
+                                    allUpWork();
+                                }
+                                allUpDoneFunc(); 
+                                allUpDone = true;
+                            } else {
+                                leftUpLock = false;
+                                allUpDone = false;
+                            }
+                        }
+                    } else if (event.button === 2) {
+                        if (leftUpLock && !allUpDone) {
+                            if (cube.status === 1 && cube.clue === sum) {
+                                allUpWork();
+                            }
+                            allUpDoneFunc(); 
+                            allUpDone = true;
+                        } else {
+                            allUpDone = false;
+                            leftUpLock = false;
+                        }
+                    }
+                }, false)
+                //光标移动
+                cube.span.addEventListener('mouseover', function () {
+                    if (!that.end) {
+                        if (cube.status === 0) {
+                            cube.hover();
+                        }
+                        if (leftUpLock) {
+                            aroundCheck(y, x);
+                        }
+                    }
+                })
+                //光标移过
+                cube.span.addEventListener('mouseout', function () {
+                    if (!that.end) {
+                        if (cube.status === 0) {
+                            cube.select_around_up();
+                        }
+                        if (center && !centerLock) {
+                            center.symbol_x_up();
+                            center = null;
+                        }
+                        if (around.length) {
+                            allUpDoneFunc();
+                        }
+                    }
+                })
             }
         }
     },
