@@ -95,10 +95,8 @@ const Minesweeper = {
 
         for (let y = 0; y < this._y; y++) {
             for (let x = 0; x < this._x; x++) {
-                //this.table[y][x].status = 0;
                 this.table[y][x].have = 0;
                 this.table[y][x].clue = 0;
-                //this.table[y][x].select = 0;
                 this.table[y][x].normal();
             }
         }
@@ -176,20 +174,20 @@ const Minesweeper = {
 
                     span: b,
 
+                    class: function (val) {
+                        this.span.setAttribute('class', val)
+                    },
+
                     normal: function () {
-                        this.span.setAttribute('class', 'basics c-cover')
+                        this.class('basics c-cover')
                         this.span.innerText = "";
                         this.span.style.color = '';
                         this.status = 0;
                         this.select = 0;
                     },
 
-                    css: function (s) {
-                        this.span.setAttribute('class', s);
-                    },
-
                     open: function () {
-                        this.span.setAttribute('class', 'basics c-bg')
+                        this.class('basics c-bg')
                         this.status = 1;
                         if (this.clue) {
                             switch (this.clue) {
@@ -210,7 +208,7 @@ const Minesweeper = {
                     },
 
                     markup: function () {
-                        this.span.setAttribute('class', 'basics c-flag')
+                        this.class('basics c-flag')
                         this.status = 2;
                         this.select = 1;
                         if (this.have === 1) { Minesweeper.restOfCube -= 1 }
@@ -219,7 +217,7 @@ const Minesweeper = {
                     },
 
                     doubt: function () {
-                        this.span.setAttribute('class', 'basics c-cover')
+                        this.class('basics c-cover')
                         this.status = 3;
                         this.select = 2;
                         this.span.style.color = '#FFFFFF';
@@ -230,20 +228,20 @@ const Minesweeper = {
                     },
                     //游戏结束，雷显示
                     exp: function () {
-                        this.span.setAttribute('class', 'basics c-bomb')
+                        this.class('basics c-bomb')
                     },
                     //直接爆炸
                     expNow: function () {
-                        this.span.setAttribute('class', 'basics c-expNow')
+                        this.class('basics c-expNow')
                         this.select = 4;
                     },
                     //游戏结束，标记正确
                     mkYesBomb: function () {
-                        this.span.setAttribute('class', 'basics c-mkyes')
+                        this.class('basics c-mkyes')
                     },
                     //游戏结束，标记错误
                     mkNoBomb: function () {
-                        this.span.setAttribute('class', 'basics c-mkno')
+                        this.class('basics c-mkno')
                     },
 
                     text: function (val) {
@@ -251,31 +249,27 @@ const Minesweeper = {
                     },
                     //X号
                     symbol_x: function () {
-                        this.span.setAttribute('class', 'basics c-bg-x')
+                        this.class('basics c-bg-x')
                     },
                     //消除X号
                     symbol_x_up: function () {
-                        this.span.setAttribute('class', 'basics c-bg')
+                        this.class('basics c-bg')
                     },
 
                     select_around: function () {
-                        this.span.setAttribute('class', 'basics c-bg')
+                        this.class('basics c-bg')
                     },
                
                     recover: function () {
-                        if (this.status === 2) {
-                            this.span.setAttribute('class', 'basics c-flag')
-                        } else {
-                            this.span.setAttribute('class', 'basics c-cover')
-                        }
+                        this.status === 2
+                            ? this.class('basics c-flag')
+                            : this.class('basics c-cover')
                     },
 
                     hover: function () {
-                        if (this.status === 2) {
-                            this.span.setAttribute('class', 'basics c-flag c-hover')
-                        } else {
-                            this.span.setAttribute('class', 'basics c-cover c-hover')
-                        }
+                        this.status === 2
+                            ? this.class('basics c-flag c-hover')
+                            : this.class('basics c-cover c-hover')
                     }
                 }
                 divLine.appendChild(b);
@@ -336,6 +330,8 @@ const Minesweeper = {
 
             that.uncoverEmpty();
 
+            if (that.end) { that.bombs();}
+
             that.checkWin();
 
             if (that.end) {
@@ -344,9 +340,7 @@ const Minesweeper = {
                 center = [];
                 around = [];
                 sum = 0;
-                that.bombs();
             }
-
         }
 
         for (let y = 0; y < this._y; y++) {
