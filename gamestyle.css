@@ -168,8 +168,8 @@
     line-height: 22px;
     width : 22px;
     height: 22px;
-    margin-top: 1px;
-    margin-right: 1px;
+    border-top: 1px solid #444;
+    border-right: 1px solid #444;
 }
 
 /**默认的尺寸元素**/
@@ -316,7 +316,9 @@
 
 
 .c-hover{
-    background-position: -154px 0;
+    /*background-position: -154px 0;*/
+    filter: brightness(1.2);
+    -webkit-filter: brightness(1.2);
 }
 
 .c-mkyes{

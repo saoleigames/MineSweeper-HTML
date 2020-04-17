@@ -95,10 +95,10 @@ const Minesweeper = {
 
         for (let y = 0; y < this._y; y++) {
             for (let x = 0; x < this._x; x++) {
-                this.table[y][x].status = 0;
+                //this.table[y][x].status = 0;
                 this.table[y][x].have = 0;
                 this.table[y][x].clue = 0;
-                this.table[y][x].select = 0;
+                //this.table[y][x].select = 0;
                 this.table[y][x].normal();
             }
         }
@@ -179,8 +179,13 @@ const Minesweeper = {
                     normal: function () {
                         this.span.setAttribute('class', 'basics c-cover')
                         this.span.innerText = "";
+                        this.span.style.color = '';
                         this.status = 0;
                         this.select = 0;
+                    },
+
+                    css: function (s) {
+                        this.span.setAttribute('class', s);
                     },
 
                     open: function () {
@@ -256,13 +261,21 @@ const Minesweeper = {
                     select_around: function () {
                         this.span.setAttribute('class', 'basics c-bg')
                     },
-
-                    select_around_up: function () {
-                        this.span.setAttribute('class', 'basics c-cover')
+               
+                    recover: function () {
+                        if (this.status === 2) {
+                            this.span.setAttribute('class', 'basics c-flag')
+                        } else {
+                            this.span.setAttribute('class', 'basics c-cover')
+                        }
                     },
 
                     hover: function () {
-                        this.span.setAttribute('class', 'basics c-hover')
+                        if (this.status === 2) {
+                            this.span.setAttribute('class', 'basics c-flag c-hover')
+                        } else {
+                            this.span.setAttribute('class', 'basics c-cover c-hover')
+                        }
                     }
                 }
                 divLine.appendChild(b);
@@ -274,7 +287,7 @@ const Minesweeper = {
 
     sweeper: function () {
 
-        let center,
+        let center = [],
             around = [],
             sum = 0,
             that = this,
@@ -283,13 +296,24 @@ const Minesweeper = {
 
         //消除动画
         function allUpDoneFunc() {
+
             if (that.end) { return }
-            if (center) { center.symbol_x_up();}
+           
+            if (center.length) { 
+                let c = center.pop()
+                c.symbol_x();
+                setTimeout(() => {
+                    c.symbol_x_up();
+                    center = [];
+                }, 60)
+            }
+
             for (let item of around) {
                 if (item.status === 0) {
-                    item.select_around_up();
+                    item.recover();
                 }
             }
+
             around = [];
             sum = 0;
         }
@@ -309,9 +333,20 @@ const Minesweeper = {
                     }
                 }
             }
+
             that.uncoverEmpty();
-            if (that.end) {that.bombs();}
+
             that.checkWin();
+
+            if (that.end) {
+                leftUpLock = false;
+                allUpDone = false;
+                center = [];
+                around = [];
+                sum = 0;
+                that.bombs();
+            }
+
         }
 
         for (let y = 0; y < this._y; y++) {
@@ -319,12 +354,44 @@ const Minesweeper = {
             for (let x = 0; x < this._x; x++) {
 
                 let cube = that.table[y][x];
+                   //光标移动
+                cube.span.addEventListener('mouseover', function () {
+
+                    if (!that.end) {
+
+                        if (cube.status !== 1) {
+                            cube.hover();
+                        }
+
+                        if (leftUpLock) {
+                            aroundCheck(y, x);
+                        }
+                    }
+                })
+                //光标移过
+                cube.span.addEventListener('mouseout', function () {
+
+                    if (!that.end) {
+
+                        if (cube.status !== 1) {
+                            cube.recover();
+                        }
+
+                        if (center.length) {
+                            center.shift().symbol_x_up();
+                        }
+
+                        if (around.length) {
+                            allUpDoneFunc();
+                        }
+                    }
+                })
                 //按下动作
                 cube.span.addEventListener('mousedown', function (event) {
 
                     if (that.end) { return }
 
-                    if (event.buttons === 1) {
+                    if (event.buttons === 1 && cube.status === 0) {
                         
                         cube.select_around();
 
@@ -369,28 +436,32 @@ const Minesweeper = {
                     })
 
                     if (cube.status === 1 && cube.clue) {
-                        cube.symbol_x();
-                        center = cube;
+                        center.push(cube);
                     } else if (cube.status === 0) {
                         around.push(cube);
                     }
 
-                    for (let item of around) {
-                        item.select_around(); 
-                    }
+                    around.forEach(item => item.select_around())
+
                 }
 
                 //松开动作
                 cube.span.addEventListener('mouseup', function (event) {
+
                     if (that.end) { return }
+
                     if (event.button === 0) {
+
                         if (!leftUpLock) {
+
                             leftUpLock = false;
+
                             if (!that.begin) {
                                 that.start(y, x);
                                 that.begin = true;
                                 that.end = false;
                             }
+
                             if (cube.status === 0) {
                                 if (cube.have === 1) {
                                     cube.expNow();
@@ -404,8 +475,11 @@ const Minesweeper = {
                                     }
                                 }
                             }
+
                             that.checkWin();
+                            
                         } else {
+
                             if (!allUpDone) {
                                 if (cube.status === 1 && cube.clue === sum) {
                                     allUpWork();
@@ -413,11 +487,12 @@ const Minesweeper = {
                                 allUpDoneFunc(); 
                                 allUpDone = true;
                             } else {
-                                leftUpLock = false;
                                 allUpDone = false;
+                                leftUpLock = false;
                             }
                         }
                     } else if (event.button === 2) {
+
                         if (leftUpLock && !allUpDone) {
                             if (cube.status === 1 && cube.clue === sum) {
                                 allUpWork();
@@ -430,31 +505,6 @@ const Minesweeper = {
                         }
                     }
                 }, false)
-                //光标移动
-                cube.span.addEventListener('mouseover', function () {
-                    if (!that.end) {
-                        if (cube.status === 0) {
-                            cube.hover();
-                        }
-                        if (leftUpLock) {
-                            aroundCheck(y, x);
-                        }
-                    }
-                })
-                //光标移过
-                cube.span.addEventListener('mouseout', function () {
-                    if (!that.end) {
-                        if (cube.status === 0) {
-                            cube.select_around_up();
-                        }
-                        if (center) {
-                            center.symbol_x_up();
-                        }
-                        if (around.length) {
-                            allUpDoneFunc();
-                        }
-                    }
-                })
             }
         }
     },
