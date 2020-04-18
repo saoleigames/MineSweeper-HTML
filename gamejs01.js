@@ -286,6 +286,7 @@ const Minesweeper = {
             sum = 0,
             that = this,
             leftUpLock = false,
+            leftKeyPress = false;
             allUpDone = false;
 
         //消除动画
@@ -310,6 +311,7 @@ const Minesweeper = {
 
             around = [];
             sum = 0;
+            leftKeyPress = false;
         }
         //清除动作
         function allUpWork() {
@@ -336,6 +338,7 @@ const Minesweeper = {
 
             if (that.end) {
                 leftUpLock = false;
+                leftKeyPress = false;
                 allUpDone = false;
                 center = [];
                 around = [];
@@ -353,7 +356,9 @@ const Minesweeper = {
 
                     if (!that.end) {
 
-                        if (cube.status !== 1) {
+                        if (leftKeyPress) {
+                            cube.select_around()
+                        } else if (cube.status !== 1) {
                             cube.hover();
                         }
 
@@ -388,6 +393,8 @@ const Minesweeper = {
                     if (event.buttons === 1 && cube.status === 0) {
                         
                         cube.select_around();
+
+                        leftKeyPress = true;
 
                     } else if (event.buttons === 2) {
                         
@@ -449,6 +456,8 @@ const Minesweeper = {
                         if (!leftUpLock) {
 
                             leftUpLock = false;
+
+                            leftKeyPress = false;
 
                             if (!that.begin) {
                                 that.start(y, x);
