@@ -1,25 +1,25 @@
-﻿
+﻿// 作者：张晓雷
+// 邮箱: zhangxiaolei@outlook.com
+// 协议：MIT
+
 let timer = new createTimer('#timer')
 
-document.querySelectorAll(".window").forEach(function (box) {
-    box.oncontextmenu = function (e) {
-        e.preventDefault();
-    }
-})
+document.oncontextmenu = function (e) {
+    e.preventDefault();
+}
 
 function random(begin, end) {
     return parseInt(Math.random() * (end - begin + 1) + begin);
 }
 
-function haveArr(a, al) {
-    for (let item of al) {
-        if (a.toString() === item.toString()) {
+function haveArr(arr, arrList) {
+    for (let item of arrList) {
+        if (arr.toString() === item.toString()) {
             return true;
         }
     }
+    return false;
 }
-
-//const mouse = new DoubleMouse();
 
 const Minesweeper = {
 
@@ -150,12 +150,27 @@ const Minesweeper = {
 
         divBorder.setAttribute('class', 'desk_border')
 
+        let _v, BGType = localGameData.BGColor;
+
+        switch (BGType) {
+            case 1: _v = '-1'; break
+            case 2: _v = '-2'; break
+            case 3: _v = '-3'; break
+        }
+
+        function make(el) {
+            return function (val, ex) {
+                ex = ex ? (' ' + ex) : '';
+                el.setAttribute('class', val + _v + ex)
+            }
+        }
+
         for (let y = 0; y < this._y; y++) {
             divLine = document.createElement('div');
             this.table[y] = Object.create(null);
             for (let x = 0; x < this._x; x++) {
                 b = document.createElement('b');
-                b.setAttribute('class', 'basics c-cover');
+                b.setAttribute('class', 'c-cover' + _v);
                 this.table[y][x] = {
 
                     // 0 ：默认   1 : 打开状态   2 : 标记小红旗   3 : 标记问号
@@ -174,12 +189,10 @@ const Minesweeper = {
 
                     span: b,
 
-                    class: function (val) {
-                        this.span.setAttribute('class', val)
-                    },
+                    class: make(b),
 
                     normal: function () {
-                        this.class('basics c-cover')
+                        this.class('c-cover')
                         this.span.innerText = "";
                         this.span.style.color = '';
                         this.status = 0;
@@ -187,7 +200,7 @@ const Minesweeper = {
                     },
 
                     open: function () {
-                        this.class('basics c-bg')
+                        this.class('c-bg')
                         this.status = 1;
                         if (this.clue) {
                             switch (this.clue) {
@@ -208,7 +221,7 @@ const Minesweeper = {
                     },
 
                     markup: function () {
-                        this.class('basics c-flag')
+                        this.class('c-flag')
                         this.status = 2;
                         this.select = 1;
                         if (this.have === 1) { Minesweeper.restOfCube -= 1 }
@@ -217,7 +230,7 @@ const Minesweeper = {
                     },
 
                     doubt: function () {
-                        this.class('basics c-cover')
+                        this.class('c-cover')
                         this.status = 3;
                         this.select = 2;
                         this.span.style.color = '#FFFFFF';
@@ -228,20 +241,20 @@ const Minesweeper = {
                     },
                     //游戏结束，雷显示
                     exp: function () {
-                        this.class('basics c-bomb')
+                        this.class('c-bomb')
                     },
                     //直接爆炸
                     expNow: function () {
-                        this.class('basics c-expNow')
+                        this.class('c-expNow')
                         this.select = 4;
                     },
                     //游戏结束，标记正确
                     mkYesBomb: function () {
-                        this.class('basics c-mkyes')
+                        this.class('c-mkyes')
                     },
                     //游戏结束，标记错误
                     mkNoBomb: function () {
-                        this.class('basics c-mkno')
+                        this.class('c-mkno')
                     },
 
                     text: function (val) {
@@ -249,27 +262,27 @@ const Minesweeper = {
                     },
                     //X号
                     symbol_x: function () {
-                        this.class('basics c-bg-x')
+                        this.class('c-bg-x')
                     },
                     //消除X号
                     symbol_x_up: function () {
-                        this.class('basics c-bg')
+                        this.class('c-bg')
                     },
 
                     select_around: function () {
-                        this.class('basics c-bg')
+                        this.class('c-bg')
                     },
                
                     recover: function () {
                         this.status === 2
-                            ? this.class('basics c-flag')
-                            : this.class('basics c-cover')
+                            ? this.class('c-flag')
+                            : this.class('c-cover')
                     },
 
                     hover: function () {
                         this.status === 2
-                            ? this.class('basics c-flag c-hover')
-                            : this.class('basics c-cover c-hover')
+                            ? this.class('c-flag', 'c-hover')
+                            : this.class('c-cover', 'c-hover')
                     }
                 }
                 divLine.appendChild(b);
@@ -711,6 +724,10 @@ function popupWinLoc(name, width, height) {
 let initGameData = {
 
     startLevel: 1,
+
+    //1:Green, 2:Red, 3:Blue
+
+    BGColor: 1,
 
     level1: {
         bestResult5: [],

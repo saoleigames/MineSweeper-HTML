@@ -170,13 +170,11 @@
     height: 22px;
     border-top: 1px solid #444;
     border-right: 1px solid #444;
+    background-image: url(swp01.png);
+    background-repeat: no-repeat;
 }
 
 /**默认的尺寸元素**/
-.basics{
-    background-repeat: no-repeat;
-    background-image: url(swp01.png);
-}
 
 /********************弹出窗口********************/
 
@@ -309,42 +307,113 @@
     box-shadow: 0 0 3px #777;
 }
 
-/***************************************test***************************************/
-.c-bg-x{
-    background-position: -176px 0;
-}
-
+/************** hover ****************/
 
 .c-hover{
-    /*background-position: -154px 0;*/
     filter: brightness(1.2);
     -webkit-filter: brightness(1.2);
 }
 
-.c-mkyes{
+/*************** type 1 ****************/
+
+.c-bg-x-1{
+    background-position: -154px 0;
+}
+
+.c-mkyes-1{
     background-position: -132px 0;
 }
 
-.c-flag{
+.c-flag-1{
     background-position: -110px 0;
 }
 
-.c-bomb{
+.c-bomb-1{
     background-position: -88px 0;
 }
 
-.c-expNow{
+.c-expNow-1{
     background-position: -66px 0;
 }
 
-.c-mkno{
+.c-mkno-1{
     background-position: -44px 0;
 }
 
-.c-cover{
+.c-cover-1{
     background-position: -22px 0;
 }
 
-.c-bg{
+.c-bg-1{
     background-position: 0px 0;
 }
+
+/************ type 2 *************/
+
+.c-bg-x-2{
+    background-position: -154px 0;
+}
+
+.c-mkyes-2{
+    background-position: -132px 0;
+}
+
+.c-flag-2{
+    background-position: -110px 0;
+}
+
+.c-bomb-2{
+    background-position: -88px 0;
+}
+
+.c-expNow-2{
+    background-position: -66px 0;
+}
+
+.c-mkno-2{
+    background-position: -44px 0;
+}
+
+.c-cover-2{
+    background-position: -22px 0;
+}
+
+.c-bg-2{
+    background-position: 0px 0;
+}
+
+/**************** type 3 *****************/
+
+.c-bg-x-3{
+    background-position: -154px 0;
+}
+
+.c-mkyes-3{
+    background-position: -132px 0;
+}
+
+.c-flag-3{
+    background-position: -110px 0;
+}
+
+.c-bomb-3{
+    background-position: -88px 0;
+}
+
+.c-expNow-3{
+    background-position: -66px 0;
+}
+
+.c-mkno-3{
+    background-position: -44px 0;
+}
+
+.c-cover-3{
+    background-position: -22px 0;
+}
+
+.c-bg-3{
+    background-position: 0px 0;
+}
+
+/*******End***********/
