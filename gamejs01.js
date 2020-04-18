@@ -158,7 +158,7 @@ const Minesweeper = {
             case 3: _v = '-3'; break
         }
 
-        function make(el) {
+        function makeClass(el) {
             return function (val, ex) {
                 ex = ex ? (' ' + ex) : '';
                 el.setAttribute('class', val + _v + ex)
@@ -189,7 +189,7 @@ const Minesweeper = {
 
                     span: b,
 
-                    class: make(b),
+                    class: makeClass(b),
 
                     normal: function () {
                         this.class('c-cover')
@@ -832,27 +832,15 @@ $('#opt-about').click(function () {
     $('#about-games-window').show();
     $(ui.opt_list).hide();
 })
-//level 1 难度切换
-$('#s-normal').click(function () {
-    Minesweeper.init(1);
-    localGameData.startLevel = 1;
-    saveGameDataToLocal();
-    $(ui.opt_list).hide();
-})
-//level 2 难度切换
-$('#s-middle').click(function () {
-    Minesweeper.init(2);
-    localGameData.startLevel = 2;
-    saveGameDataToLocal();
-    $(ui.opt_list).hide();
-})
-//level 3 难度切换
-$('#s-hard').click(function () {
-    Minesweeper.init(3);
-    localGameData.startLevel = 3;
-    saveGameDataToLocal();
-    $(ui.opt_list).hide();
-})
+
+document.querySelectorAll('.opt-level li').forEach((item, index) => {
+    item.addEventListener('click', function () {
+        Minesweeper.init(index + 1);
+        localGameData.startLevel = index + 1;
+        saveGameDataToLocal();
+        $(ui.opt_list).hide();
+    })
+}, false)
 
 function infoSwitch(level) {
     if (level === 1) {
@@ -899,4 +887,13 @@ $(ui.opt_switch.l2).click(function () {
 $(ui.opt_switch.l3).click(function () {
     infoSwitch(3)
     displayInfo(localGameData.level3)
+})
+
+document.querySelectorAll('.opt-bg li').forEach((item, index) => {
+    item.addEventListener('click', function () {
+        localGameData.BGColor = index + 1;
+        Minesweeper.init(Minesweeper.level)
+        saveGameDataToLocal();
+        $(ui.opt_list).hide();
+    }, false)
 })
