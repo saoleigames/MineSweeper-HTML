@@ -119,14 +119,14 @@ const Minesweeper = {
 
     getAround: function (y, x) {
         let a = [];
-        this.check(y - 1, x - 1) && a.push([y - 1, x - 1])
-        this.check(y - 1, x) && a.push([y - 1, x])
-        this.check(y - 1, x + 1) && a.push([y - 1, x + 1])
-        this.check(y, x + 1) && a.push([y, x + 1])
-        this.check(y + 1, x + 1) && a.push([y + 1, x + 1])
-        this.check(y + 1, x) && a.push([y + 1, x])
-        this.check(y + 1, x - 1) && a.push([y + 1, x - 1])
-        this.check(y, x - 1) && a.push([y, x - 1])
+        this.check(y - 1, x - 1) && a.push([y - 1, x - 1]);
+        this.check(y - 1, x) && a.push([y - 1, x]);
+        this.check(y - 1, x + 1) && a.push([y - 1, x + 1]);
+        this.check(y, x + 1) && a.push([y, x + 1]);
+        this.check(y + 1, x + 1) && a.push([y + 1, x + 1]);
+        this.check(y + 1, x) && a.push([y + 1, x]);
+        this.check(y + 1, x - 1) && a.push([y + 1, x - 1]);
+        this.check(y, x - 1) && a.push([y, x - 1]);
         return a;
     },
 
@@ -157,11 +157,11 @@ const Minesweeper = {
             case 2: _v = '-2'; break
             case 3: _v = '-3'; break
         }
-
-        function makeClass(el) {
+        // v === _v
+        function makeClass(el, v) {
             return function (val, ex) {
                 ex = ex ? (' ' + ex) : '';
-                el.setAttribute('class', val + _v + ex)
+                el.setAttribute('class', val + v + ex)
             }
         }
 
@@ -181,15 +181,12 @@ const Minesweeper = {
 
                     clue: 0,
 
-                    /*
-                    select属性用来记录鼠标右键点击时，方块的状态。连续点击，会进入轮回状态。
-                    等于0时，执行操作后，select等于1；等于1时，执行操作后，select等于2；等于2时，执行操作，select等于0。
-                    */
+                    //等于0时，执行操作后，select等于1；等于1时，执行操作后，select等于2；等于2时，执行操作，select等于0。
                     select: 0,
 
                     span: b,
 
-                    class: makeClass(b),
+                    class: makeClass(b, _v),
 
                     normal: function () {
                         this.class('c-cover')
