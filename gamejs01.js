@@ -2,7 +2,7 @@
 // 邮箱: zhangxiaolei@outlook.com
 // 协议：MIT
 
-let timer = new createTimer('#timer')
+const timer = new createTimer('#timer');
 
 document.oncontextmenu = function (e) {
     e.preventDefault();
@@ -202,14 +202,14 @@ const Minesweeper = {
                         if (this.clue) {
                             switch (this.clue) {
                                 //颜色按照win7系统自带的扫雷数字设置
-                                case 1: this.span.style.color = 'rgb(65,80,190)'; break;
-                                case 2: this.span.style.color = 'rgb(30,100,5)'; break;
-                                case 3: this.span.style.color = 'rgb(170,5,5)'; break;
-                                case 4: this.span.style.color = 'rgb(15,15,140)'; break;
-                                case 5: this.span.style.color = 'rgb(125,5,5)'; break;
-                                case 6: this.span.style.color = 'rgb(5,125,125)'; break;
-                                case 7: this.span.style.color = 'rgb(170,5,5)'; break;
-                                case 8: this.span.style.color = 'rgb(170,5,5)'; break;
+                                case 1: this.span.style.color = 'rgb(65,80,190)'; break
+                                case 2: this.span.style.color = 'rgb(30,100,5)'; break
+                                case 3: this.span.style.color = 'rgb(170,5,5)'; break
+                                case 4: this.span.style.color = 'rgb(15,15,140)'; break
+                                case 5: this.span.style.color = 'rgb(125,5,5)'; break
+                                case 6: this.span.style.color = 'rgb(5,125,125)'; break
+                                case 7: this.span.style.color = 'rgb(170,5,5)'; break
+                                case 8: this.span.style.color = 'rgb(170,5,5)'; break
                                 default: console.log("clue error")
                             }
                             this.text(this.clue)
@@ -618,8 +618,8 @@ const Minesweeper = {
 
     checkWin: function () {
         if (this.restOfCube === 0) {
-            popupWinLoc('#games-win-window', 237, 179);
             $('#games-win-window').show();
+            setPopupLoc('#games-win-window');
             timer.stop();
             this.end = true;
             $('#spendTime').text(timer.getTime() + '秒')
@@ -706,19 +706,21 @@ document.querySelectorAll('.point3').forEach(function (item) {
     }, false)
 })
 //所有弹出窗口的定位
-function popupWinLoc(name, width, height) {
-    winsize = document.querySelector(name);
-    let m = ui.minesweeper;
-    let w = m.offsetWidth;
-    let h = m.offsetHeight;
-    let y = m.offsetTop;
-    let x = m.offsetLeft;
-    winsize.style.left = (x + w / 2) - width / 2 + 'px';
-    winsize.style.top = (y + h / 2) - height / 2 + 'px';
+function setPopupLoc(name) {
+    let el = document.querySelector(name),
+        m = ui.minesweeper,
+        y = m.offsetTop,
+        x = m.offsetLeft,
+        w = m.offsetWidth,
+        h = m.offsetHeight,
+        el_w = el.offsetWidth,
+        el_h = el.offsetHeight;
+    el.style.left = (x + w / 2) - el_w / 2 + 'px';
+    el.style.top = (y + h / 2) - el_h / 2 + 'px';
 }
 
 //初始数据
-let initGameData = {
+const initGameData = {
 
     startLevel: 1,
 
@@ -780,7 +782,7 @@ function displayInfo(obj) {
 }
 
 //载入本地数据
-let localGameData = JSON.parse(localStorage.getItem("swpGameData"));
+const localGameData = JSON.parse(localStorage.getItem("swpGameData"));
 
 if (!localGameData) {
     localGameData = initGameData;
@@ -796,7 +798,7 @@ function saveGameDataToLocal() {
     }
 }
 //所有UI对象的保存
-let ui = {
+const ui = {
     opt: $('#opt').ele,
     opt_list: $('#opt-list').ele,
     minesweeper: $('#minesweeper').ele,
@@ -825,8 +827,8 @@ $('#opt-restart').click(function () {
 })
 //关于窗口
 $('#opt-about').click(function () {
-    popupWinLoc('#about-games-window', 414, 338)
     $('#about-games-window').show();
+    setPopupLoc('#about-games-window')
     $(ui.opt_list).hide();
 })
 
@@ -856,18 +858,18 @@ function infoSwitch(level) {
 }
 
 $('#opt-info').click(function () {
-    let item;
-    popupWinLoc('#games-info-window', 414, 284)
+    let data, level = Minesweeper.level;
     $('#games-info-window').show();
+    setPopupLoc('#games-info-window')
     infoSwitch(Minesweeper.level)
-    if (Minesweeper.level === 1) {
-        item = localGameData.level1;
-    } else if (Minesweeper.level === 2) {
-        item = localGameData.level2;
-    } else if (Minesweeper.level === 3) {
-        item = localGameData.level3;
+    if (level === 1) {
+        data = localGameData.level1;
+    } else if (level === 2) {
+        data = localGameData.level2;
+    } else if (level === 3) {
+        data = localGameData.level3;
     }
-    displayInfo(item)
+    displayInfo(data)
     $(ui.opt_list).hide();
 })
 
