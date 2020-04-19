@@ -296,7 +296,7 @@ const Minesweeper = {
             sum = 0,
             that = this,
             leftUpLock = false,
-            leftKeyPress = false;
+            leftKeyPress = false,
             allUpDone = false;
 
         //消除动画
@@ -524,9 +524,12 @@ const Minesweeper = {
 
     settleBombs: function (ny, nx) {
 
-        let notList = this.getAround(ny, nx);
+        let y, x,
+            n = this.bombsNumber,
+            notList = this.getAround(ny, nx);
+
         notList.push([ny, nx]);
-        let y, x, n = this.bombsNumber;
+
         while (n) {
             do {
                 y = random(0, this._y - 1);
