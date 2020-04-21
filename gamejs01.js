@@ -2,6 +2,10 @@
 // 邮箱: zhangxiaolei@outlook.com
 // 协议：MIT
 
+//const log = console.log;
+
+'use strict';
+
 const timer = new createTimer('#timer');
 
 document.oncontextmenu = function (e) {
@@ -10,6 +14,16 @@ document.oncontextmenu = function (e) {
 
 function random(begin, end) {
     return parseInt(Math.random() * (end - begin + 1) + begin);
+}
+
+function kShuffle(arr) {
+    let ridx, end;
+    for (let i = arr.length - 1; i >= 0; i--) {
+        end = arr[i];
+        ridx = random(0, i);
+        arr[i] = arr[ridx]
+        arr[ridx] = end;
+    }
 }
 
 function haveArr(arr, arrList) {
@@ -95,7 +109,7 @@ const Minesweeper = {
 
         for (let y = 0; y < this._y; y++) {
             for (let x = 0; x < this._x; x++) {
-                this.table[y][x].have = 0;
+                this.table[y][x].have = undefined;
                 this.table[y][x].clue = 0;
                 this.table[y][x].normal();
             }
@@ -144,11 +158,9 @@ const Minesweeper = {
 
     createDest: function () {
 
-        let divBorder, divLine, b;
+        this.border = document.createElement('div');
 
-        divBorder = document.createElement('div');
-
-        divBorder.setAttribute('class', 'desk_border')
+        this.border.setAttribute('class', 'desk_border')
 
         let _v, BGType = localGameData.BGColor;
 
@@ -157,7 +169,7 @@ const Minesweeper = {
             case 2: _v = '-2'; break
             case 3: _v = '-3'; break
         }
-        // v === _v
+
         function makeClass(el, v) {
             return function (val, ex) {
                 ex = ex ? (' ' + ex) : '';
@@ -165,8 +177,10 @@ const Minesweeper = {
             }
         }
 
+        let line, b;
+
         for (let y = 0; y < this._y; y++) {
-            divLine = document.createElement('div');
+            line = document.createElement('div');
             this.table[y] = Object.create(null);
             for (let x = 0; x < this._x; x++) {
                 b = document.createElement('b');
@@ -176,8 +190,8 @@ const Minesweeper = {
                     // 0 ：默认   1 : 打开状态   2 : 标记小红旗   3 : 标记问号
                     status: 0,
 
-                    // 0 : 空  1 : 有雷  2 : 有数字
-                    have: 0,
+                    // undifined : 空  1 : 有雷  2 : 有数字
+                    have: undefined,
 
                     clue: 0,
 
@@ -282,11 +296,11 @@ const Minesweeper = {
                             : this.class('c-cover', 'c-hover')
                     }
                 }
-                divLine.appendChild(b);
+                line.appendChild(b);
             }
-            divBorder.appendChild(divLine);
+            this.border.appendChild(line);
         }
-        this.ele_desk.appendChild(divBorder);
+        this.ele_desk.appendChild(this.border);
     },
 
     sweeper: function () {
@@ -298,6 +312,12 @@ const Minesweeper = {
             leftUpLock = false,
             leftKeyPress = false,
             allUpDone = false;
+
+
+        this.border.addEventListener('mouseleave', function () {
+            allUpDoneFunc();
+            leftUpLock = false;
+        }, false)
 
         //消除动画
         function allUpDoneFunc() {
@@ -362,7 +382,7 @@ const Minesweeper = {
 
                 let cube = that.table[y][x];
                    //光标移动
-                cube.span.addEventListener('mouseover', function () {
+                cube.span.addEventListener('mouseenter', function (e) {
 
                     if (!that.end) {
 
@@ -376,9 +396,9 @@ const Minesweeper = {
                             aroundCheck(y, x);
                         }
                     }
-                })
+                }, false)
                 //光标移过
-                cube.span.addEventListener('mouseout', function () {
+                cube.span.addEventListener('mouseleave', function () {
 
                     if (!that.end) {
 
@@ -394,7 +414,7 @@ const Minesweeper = {
                             allUpDoneFunc();
                         }
                     }
-                })
+                }, false)
                 //按下动作
                 cube.span.addEventListener('mousedown', function (event) {
 
@@ -524,20 +544,30 @@ const Minesweeper = {
 
     settleBombs: function (ny, nx) {
 
-        let y, x,
-            n = this.bombsNumber,
+        let rest,
+            bombs = this.bombsNumber,
+            cubes = this._x * this._y - bombs,
             notList = this.getAround(ny, nx);
 
         notList.push([ny, nx]);
 
-        while (n) {
-            do {
-                y = random(0, this._y - 1);
-                x = random(0, this._x - 1);
-            } while (haveArr([y, x], notList))
-            if (this.table[y][x].have !== 1) {
-                this.table[y][x].have = 1;
-                n -= 1;
+        rest = cubes - notList.length;
+
+        let bombsArr = new Array(bombs).fill(1);
+
+        let bothArr = bombsArr.concat(new Array(rest).fill(0))
+
+        kShuffle(bothArr);
+
+        notList.forEach(i => {
+            this.table[i[0]][i[1]].have = 0
+        })
+
+        for (let y = 0; y < this._y; y++) {
+            for (let x = 0; x < this._x; x++) {
+                if (this.table[y][x].have === undefined) {
+                    this.table[y][x].have = bothArr.pop();
+                }
             }
         }
     },
