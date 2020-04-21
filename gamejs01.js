@@ -13,7 +13,7 @@ document.oncontextmenu = function (e) {
 }
 
 function random(begin, end) {
-    return parseInt(Math.random() * (end - begin + 1) + begin);
+    return Math.floor(Math.random() * (end - begin + 1) + begin);
 }
 
 function kShuffle(arr) {
@@ -21,7 +21,7 @@ function kShuffle(arr) {
     for (let i = arr.length - 1; i >= 0; i--) {
         end = arr[i];
         ridx = random(0, i);
-        arr[i] = arr[ridx]
+        arr[i] = arr[ridx];
         arr[ridx] = end;
     }
 }
@@ -753,7 +753,7 @@ function setPopupLoc(name) {
 }
 
 //初始数据
-const initGameData = {
+let initGameData = {
 
     startLevel: 1,
 
@@ -815,7 +815,7 @@ function displayInfo(obj) {
 }
 
 //载入本地数据
-const localGameData = JSON.parse(localStorage.getItem("swpGameData"));
+let localGameData = JSON.parse(localStorage.getItem("swpGameData"));
 
 if (!localGameData) {
     localGameData = initGameData;
