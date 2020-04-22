@@ -2,7 +2,7 @@
 // 邮箱: zhangxiaolei@outlook.com
 // 协议：MIT
 
-//const log = console.log;
+const log = console.log;
 
 'use strict';
 
@@ -224,7 +224,7 @@ const Minesweeper = {
                                 case 6: this.span.style.color = 'rgb(5,125,125)'; break
                                 case 7: this.span.style.color = 'rgb(170,5,5)'; break
                                 case 8: this.span.style.color = 'rgb(170,5,5)'; break
-                                default: console.log("clue error")
+                                default: console.error("clue error")
                             }
                             this.text(this.clue)
                         }
@@ -310,17 +310,15 @@ const Minesweeper = {
             sum = 0,
             that = this,
             leftUpLock = false,
-            leftKeyPress = false,
-            allUpDone = false;
-
+            leftKeyPress = false;
 
         this.border.addEventListener('mouseleave', function () {
-            allUpDoneFunc();
+            aroundClear();
             leftUpLock = false;
         }, false)
 
         //消除动画
-        function allUpDoneFunc() {
+        function aroundClear() {
 
             if (that.end) { return }
            
@@ -344,7 +342,7 @@ const Minesweeper = {
             leftKeyPress = false;
         }
         //清除动作
-        function allUpWork() {
+        function bothUpWork() {
             //执行这一个步的前提是 status === 1 && sum === clue
             //收集around数据的条件是 status === 0，也就是遮盖的方块
             //理论上到这一步，around里的数据都是空的，因为 sum === clue。但用户可能标错，所以一旦发现 have === 1 则说明触雷，游戏结束。
@@ -369,7 +367,6 @@ const Minesweeper = {
             if (that.end) {
                 leftUpLock = false;
                 leftKeyPress = false;
-                allUpDone = false;
                 center = [];
                 around = [];
                 sum = 0;
@@ -411,7 +408,7 @@ const Minesweeper = {
                         }
 
                         if (around.length) {
-                            allUpDoneFunc();
+                            aroundClear();
                         }
                     }
                 }, false)
@@ -512,31 +509,20 @@ const Minesweeper = {
                             that.checkWin();
                             
                         } else {
-
-                            if (!allUpDone) {
-                                if (cube.status === 1 && cube.clue === sum) {
-                                    allUpWork();
-                                }
-                                allUpDoneFunc(); 
-                                allUpDone = true;
+                            if (cube.status === 1 && cube.clue === sum) {
+                                bothUpWork();
                             } else {
-                                allUpDone = false;
                                 leftUpLock = false;
                             }
                         }
                     } else if (event.button === 2) {
-
-                        if (leftUpLock && !allUpDone) {
-                            if (cube.status === 1 && cube.clue === sum) {
-                                allUpWork();
-                            }
-                            allUpDoneFunc(); 
-                            allUpDone = true;
+                        if (leftUpLock && cube.status === 1 && cube.clue === sum) {
+                            bothUpWork();
                         } else {
-                            allUpDone = false;
                             leftUpLock = false;
                         }
                     }
+                    aroundClear();
                 }, false)
             }
         }
@@ -560,7 +546,7 @@ const Minesweeper = {
         kShuffle(bothArr);
 
         notList.forEach(i => {
-            this.table[i[0]][i[1]].have = 0
+            this.table[i[0]][i[1]].have = 0;
         })
 
         for (let y = 0; y < this._y; y++) {
