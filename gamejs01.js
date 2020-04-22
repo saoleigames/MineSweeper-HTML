@@ -511,16 +511,14 @@ const Minesweeper = {
                         } else {
                             if (cube.status === 1 && cube.clue === sum) {
                                 bothUpWork();
-                            } else {
-                                leftUpLock = false;
                             }
+                            leftUpLock = false;
                         }
                     } else if (event.button === 2) {
                         if (leftUpLock && cube.status === 1 && cube.clue === sum) {
                             bothUpWork();
-                        } else {
-                            leftUpLock = false;
-                        }
+                        } 
+                        leftUpLock = false;
                     }
                     aroundClear();
                 }, false)
