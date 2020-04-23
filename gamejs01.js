@@ -2,9 +2,9 @@
 // 邮箱: zhangxiaolei@outlook.com
 // 协议：MIT
 
-const log = console.log;
-
 'use strict';
+
+const log = console.log;
 
 const timer = new createTimer('#timer');
 
@@ -85,7 +85,6 @@ const Minesweeper = {
         this.createDest();
         this.sweeper();
 
-
         //重新显示雷的剩余数量
         this.restOfBombs = this.bombsNumber;
         $('#mineNum').text(this.restOfBombs);
@@ -129,7 +128,6 @@ const Minesweeper = {
         this.restOfCube = this._y * this._x;
 
     },
-
 
     getAround: function (y, x) {
         let a = [];
@@ -331,17 +329,18 @@ const Minesweeper = {
                 }, 60)
             }
 
-            for (let item of around) {
-                if (item.status === 0) {
-                    item.recover();
+            if (around.length) {
+                for (let item of around) {
+                    if (item.status === 0) {
+                        item.recover();
+                    }
                 }
+                around = [];
+                sum = 0;
+                leftKeyPress = false;
             }
-
-            around = [];
-            sum = 0;
-            leftKeyPress = false;
         }
-        //清除动作
+        
         function bothUpWork() {
             //执行这一个步的前提是 status === 1 && sum === clue
             //收集around数据的条件是 status === 0，也就是遮盖的方块
@@ -379,7 +378,7 @@ const Minesweeper = {
 
                 let cube = that.table[y][x];
                    //光标移动
-                cube.span.addEventListener('mouseenter', function (e) {
+                cube.span.addEventListener('mouseenter', function () {
 
                     if (!that.end) {
 
