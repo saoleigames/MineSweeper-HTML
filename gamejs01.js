@@ -308,7 +308,8 @@ const Minesweeper = {
             sum = 0,
             that = this,
             leftUpLock = false,
-            leftKeyPress = false;
+            leftKeyPress = false,
+            onlyOneLock = false;
 
         this.border.addEventListener('mouseleave', function () {
             aroundClear();
@@ -316,11 +317,11 @@ const Minesweeper = {
         }, false)
 
         //消除动画
-        function aroundClear() {
+        function aroundClear(s, c) {
 
             if (that.end) { return }
            
-            if (center.length) { 
+            if (s !== c && center.length) { 
                 let c = center.pop()
                 c.symbol_x();
                 setTimeout(() => {
@@ -346,6 +347,7 @@ const Minesweeper = {
             //收集around数据的条件是 status === 0，也就是遮盖的方块
             //理论上到这一步，around里的数据都是空的，因为 sum === clue。但用户可能标错，所以一旦发现 have === 1 则说明触雷，游戏结束。
             //bombs方法会对标记正确还是错误进行判断，并进行标识。
+
             for (let item of around) {
                 if (item.status === 0) {
                     if (item.have !== 1) {
@@ -444,6 +446,8 @@ const Minesweeper = {
                         
                         leftUpLock = true;
 
+                        onlyOneLock = false;
+
                         aroundCheck(y, x);
 
                     }
@@ -453,6 +457,8 @@ const Minesweeper = {
                 function aroundCheck(y, x) {
 
                     let status;
+
+                    sum = 0;
 
                     that.getAround(y, x).forEach((p) => {
                         status = that.table[p[0]][p[1]].status;
@@ -508,18 +514,38 @@ const Minesweeper = {
                             that.checkWin();
                             
                         } else {
-                            if (cube.status === 1 && cube.clue === sum) {
-                                bothUpWork();
+
+                            if (!onlyOneLock) {
+
+                                if (cube.status === 1 && cube.clue !== 0 && cube.clue === sum) {
+                                    bothUpWork();
+                                }
+
+                                aroundClear(cube.clue, sum);
+
+                                onlyOneLock = true;
+                            } else {
+                                onlyOneLock = false;
                             }
                             leftUpLock = false;
                         }
+
                     } else if (event.button === 2) {
-                        if (leftUpLock && cube.status === 1 && cube.clue === sum) {
-                            bothUpWork();
-                        } 
-                        leftUpLock = false;
+
+                        if (!onlyOneLock && leftUpLock) {
+
+                            if (cube.status === 1 && cube.clue !== 0 && cube.clue === sum) {
+                                bothUpWork();
+                            }
+
+                            aroundClear(cube.clue, sum);
+
+                            onlyOneLock = true;
+
+                        } else {
+                            onlyOneLock = false;
+                        }
                     }
-                    aroundClear();
                 }, false)
             }
         }
