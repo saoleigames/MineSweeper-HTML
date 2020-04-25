@@ -147,19 +147,23 @@
 #desk .desk_border{
     display: flex;
     flex-direction: column;
+    padding: 3px;
     align-items: center;
-    background-color: #444;
-    border: 1px solid #999;
+    border: 1px solid rgb(107, 106, 106);
+    box-shadow: inset 3px 3px 2px 3px rgb(190, 186, 186), inset -3px -3px 2px 3px rgb(189, 186, 186);
 }
 
 #desk div{
     display: flex;
     justify-content: center;
-    margin-left: 1px;
 }
 
-#desk div:last-child{
-    margin-bottom: 1px;
+#desk div b:first-child{
+    border-left: 1px solid #444;
+}
+
+#desk .desk_border div:last-child{
+    border-bottom: 1px solid #444;
 }
 
 #desk b{
