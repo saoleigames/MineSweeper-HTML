@@ -320,14 +320,25 @@ const Minesweeper = {
         function aroundClear(s, c) {
 
             if (that.end) { return }
+
+            let stop, bgn = 1;
            
             if (s !== c && center.length) { 
                 let c = center.pop()
                 c.symbol_x();
-                setTimeout(() => {
-                    c.symbol_x_up();
-                    center = [];
-                }, 60)
+                stop = setInterval(() => {
+                    if (bgn === 1) {
+                        c.symbol_x_up();
+                        bgn ++;
+                    } else if (bgn === 2) {
+                        c.symbol_x();
+                        bgn ++;
+                    } else {
+                        c.symbol_x_up();
+                        //center = [];
+                        clearInterval(stop);
+                    }
+                }, 100);
             }
 
             if (around.length) {
