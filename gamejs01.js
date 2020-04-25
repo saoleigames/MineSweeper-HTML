@@ -1,10 +1,13 @@
 ﻿// 作者：张晓雷
 // 邮箱: zhangxiaolei@outlook.com
 // 协议：MIT
+//
+// 功能参照 windows7 自带的扫雷
+// 2020-4-25
 
 'use strict';
-
-const log = console.log;
+//Debug Pro
+//const log = console.log;
 
 const timer = new createTimer('#timer');
 
@@ -24,15 +27,6 @@ function kShuffle(arr) {
         arr[i] = arr[ridx];
         arr[ridx] = end;
     }
-}
-
-function haveArr(arr, arrList) {
-    for (let item of arrList) {
-        if (arr.toString() === item.toString()) {
-            return true;
-        }
-    }
-    return false;
 }
 
 const Minesweeper = {
@@ -82,7 +76,7 @@ const Minesweeper = {
         //重置表格单元
         this.ele_desk = document.querySelector("#desk");
         this.ele_desk.innerHTML = '';
-        this.createDest();
+        this.createDesk();
         this.sweeper();
 
         //重新显示雷的剩余数量
@@ -154,7 +148,7 @@ const Minesweeper = {
         }
     },
 
-    createDest: function () {
+    createDesk: function () {
 
         this.border = document.createElement('div');
 
@@ -305,7 +299,7 @@ const Minesweeper = {
 
         let center = [],
             around = [],
-            sum = 0,
+            sum,
             that = this,
             leftUpLock = false,
             leftKeyPress = false,
@@ -314,6 +308,7 @@ const Minesweeper = {
         this.border.addEventListener('mouseleave', function () {
             aroundClear();
             leftUpLock = false;
+            leftKeyPress = false;
         }, false)
 
         //消除动画
@@ -335,7 +330,6 @@ const Minesweeper = {
                         bgn ++;
                     } else {
                         c.symbol_x_up();
-                        //center = [];
                         clearInterval(stop);
                     }
                 }, 100);
@@ -354,6 +348,7 @@ const Minesweeper = {
         }
         
         function bothUpWork() {
+
             //执行这一个步的前提是 status === 1 && sum === clue
             //收集around数据的条件是 status === 0，也就是遮盖的方块
             //理论上到这一步，around里的数据都是空的，因为 sum === clue。但用户可能标错，所以一旦发现 have === 1 则说明触雷，游戏结束。
@@ -385,12 +380,36 @@ const Minesweeper = {
             }
         }
 
+        function aroundCheck(y, x) {
+
+            let status, cube = that.table[y][x];
+
+            sum = 0;
+
+            that.getAround(y, x).forEach((p) => {
+                status = that.table[p[0]][p[1]].status;
+                sum += (status === 2 ? 1 : 0)
+                if (status === 0) {
+                    around.push(that.table[p[0]][p[1]])
+                }
+            })
+
+            if (cube.status === 1 && cube.clue) {
+                center.push(cube);
+            } else if (cube.status === 0) {
+                around.push(cube);
+            }
+
+            around.forEach(item => item.select_around())
+
+        }
+
         for (let y = 0; y < this._y; y++) {
 
             for (let x = 0; x < this._x; x++) {
 
                 let cube = that.table[y][x];
-                   //光标移动
+                //指针移动
                 cube.span.addEventListener('mouseenter', function () {
 
                     if (!that.end) {
@@ -406,7 +425,7 @@ const Minesweeper = {
                         }
                     }
                 }, false)
-                //光标移过
+                //指针离开
                 cube.span.addEventListener('mouseleave', function () {
 
                     if (!that.end) {
@@ -424,7 +443,7 @@ const Minesweeper = {
                         }
                     }
                 }, false)
-                //按下动作
+                //鼠标按下
                 cube.span.addEventListener('mousedown', function (event) {
 
                     if (that.end) { return }
@@ -465,31 +484,7 @@ const Minesweeper = {
 
                 }, false)
 
-                function aroundCheck(y, x) {
-
-                    let status;
-
-                    sum = 0;
-
-                    that.getAround(y, x).forEach((p) => {
-                        status = that.table[p[0]][p[1]].status;
-                        sum += (status === 2 ? 1 : 0)
-                        if (status === 0) {
-                            around.push(that.table[p[0]][p[1]])
-                        }
-                    })
-
-                    if (cube.status === 1 && cube.clue) {
-                        center.push(cube);
-                    } else if (cube.status === 0) {
-                        around.push(cube);
-                    }
-
-                    around.forEach(item => item.select_around())
-
-                }
-
-                //松开动作
+                //鼠标松开
                 cube.span.addEventListener('mouseup', function (event) {
 
                     if (that.end) { return }
@@ -776,8 +771,6 @@ function setPopupLoc(name) {
 let initGameData = {
 
     startLevel: 1,
-
-    //1:Green, 2:Red, 3:Blue
 
     BGColor: 1,
 
