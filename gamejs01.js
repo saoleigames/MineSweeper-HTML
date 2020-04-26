@@ -874,7 +874,7 @@ $('#opt-restart').click(function () {
 //关于窗口
 $('#opt-about').click(function () {
     $('#about-games-window').show();
-    setPopupLoc('#about-games-window')
+    //setPopupLoc('#about-games-window')
     $(ui.opt_list).hide();
 })
 
@@ -942,3 +942,10 @@ document.querySelectorAll('.opt-bg li').forEach((item, index) => {
         $(ui.opt_list).hide();
     }, false)
 })
+
+document.querySelector('#rst-data').addEventListener('click', function () {
+    if (confirm('清除所有游戏记录？')) {
+        localStorage.clear();
+        document.location.reload();
+    }
+}, false)

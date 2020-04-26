@@ -218,7 +218,7 @@
     flex-wrap: wrap;
     align-content: center;
     width : 370px;
-    margin: 15px 15px 20px 15px;
+    margin: 15px 15px 15px 15px;
     box-shadow: 0 0 3px gray;
 }
 
@@ -290,6 +290,21 @@
     margin : 5px 0;
 }
 
+.reset-game-data{
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.reset-game-data button{
+    display: inline-block;
+    width : 3.8em;
+}
+
+.reset-game-data button:last-child{
+    margin-left: 0.5em;
+    font-weight: bold;
+    color: red;
+}
 
 /* --------------关于游戏-------------*/
 
@@ -301,13 +316,17 @@
 }
 
 #about-games-content{
+    padding: 1em;
+    width: 420px;
+    max-height: 525px;
+    overflow: auto;
+}
+
+#about-games-content .author-img{
     text-align: center;
-    margin: 2.6em 0;
 }
 
 #about-games-content img{
-    max-width: 70%;
-    height: auto;
     box-shadow: 0 0 3px #777;
 }
 

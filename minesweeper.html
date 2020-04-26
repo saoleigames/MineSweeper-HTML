@@ -75,7 +75,7 @@
         <!--获胜窗口-->
         <div id="games-win-window" class="window">
             <div class="window-title">
-                <div  id="move-win" class="window-title-left-span">提示</div>
+                <div  id="move-win" class="window-title-left-span">恭喜!</div>
                 <div class="window-title-right-icon">
                     <span class="point3"></span>
                 </div>
@@ -131,6 +131,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="reset-game-data">
+                    <button class="point3">关闭</button>
+                    <button id='rst-data'>重置</button>
+                </div>
             </div>
         </div>
     
@@ -146,8 +150,23 @@
     
             <div class="window-container">
                 <div id="about-games-content">
-                    <img src="../myBlog/img/梵高.jpg"/>
-                    <!--<a style="color : #333; text-decoration: none;" target="_blank" href="https://zhangxiaoleiv.github.io/blog/2019/%E8%BF%99%E6%98%AF%E4%BB%80%E4%B9%88.html">@张晓雷</a>-->
+                    <div class="author-img"><img src="../myBlog/img/梵高.jpg"/></div>
+                    <div class="author">
+                        <hr/>
+                        <p>作者：张晓雷</p>
+                        <p>邮箱：zhangxiaolei@outlook.com</p>
+                        <p><strong>介绍</strong></p>
+                        <p>游戏的操作和 windows7 自带的扫雷一样。</p>
+                        <p>
+                            第一步不会遇到雷，因为布雷是从第一次点击开始。点击以后，程序获取玩家点击格子的坐标，通过这个坐标获取周围的 8 个格子的坐标，在布雷的时候，将这 9 个格子的坐标都排除。这样就保证了玩家第一次点击时，尽可能获取较大的开局。根据我的观察，windows7 上的扫雷也是这样做的。
+                        </p>
+                        <p>
+                            雷的布局算法采用了 Knuth-Durstenfeld Shuffle 算法，但随机函数用的是系统自带的随机函数。基本上就是生成一个雷与空白格子的列表，然后用洗牌算发打，最后顺序填充到二维的格子区域。
+                        </p>
+                        <p>
+                            游戏尽可能的模拟了 windows7 上的各种特性，比如左键松开才会触发扫雷操作，如果此时再按下右键，将解除扫雷动作。双键按下，在格子区域划过，周围的格子也会出现视觉效果。双键在数字上同时按下，如果达不到双键排除的操作，将会出现一个闪两次的红色 X 号。
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
